@@ -262,8 +262,8 @@ class DocumentTracker(QObject):
 
             try:
                 result = capture_docx_file(
-                    path,
                     session,
+                    path,
                 )
 
                 session.commit()

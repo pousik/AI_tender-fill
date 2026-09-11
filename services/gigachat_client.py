@@ -20,7 +20,7 @@ except ImportError:  # позволяет запускать OCR/детерми�
 GIGACHAT_CREDENTIALS = os.getenv("GIGACHAT_CREDENTIALS", "MDFhMDY2YWMtZDc1Ni03NTc0LTg4MDEtMzJmYmY2YTY2MDkwOjZkMjFiMmI3LTY4MGItNGUyZS05YjQ4LWViY2E4NjIwMGU0Nw==").strip()
 if GIGACHAT_CREDENTIALS.lower().startswith("bearer "):
     GIGACHAT_CREDENTIALS = GIGACHAT_CREDENTIALS[7:].strip()
-GIGACHAT_MODEL = os.getenv("GIGACHAT_MODEL", "GigaChat-2-Max")
+GIGACHAT_MODEL = os.getenv("GIGACHAT_MODEL", "GigaChat-2")
 GIGACHAT_SCOPE = os.getenv("GIGACHAT_SCOPE", "GIGACHAT_API_PERS")
 GIGACHAT_BASE_URL = os.getenv("GIGACHAT_BASE_URL", "https://api.giga.chat/v1")
 GIGACHAT_VERIFY_SSL = os.getenv("GIGACHAT_VERIFY_SSL_CERTS", "false").strip().lower() == "true"
