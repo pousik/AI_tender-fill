@@ -1,0 +1,131 @@
+{
+  "knowledge": [
+    {
+      "category": "manufacturer",
+      "key": "manufacturer",
+      "value": "ООО «Эльмаш (УЭТМ)»",
+      "aliases": [
+        "изготовитель",
+        "производитель"
+      ],
+      "source": "project_base",
+      "notes": "Базовое значение проекта. Подтвердить паспортом/официальным источником перед использованием в производственном контуре."
+    },
+    {
+      "category": "product",
+      "key": "brand",
+      "value": "ТРГ-УЭТМ-110",
+      "aliases": [
+        "заводской тип",
+        "марка",
+        "тип изделия"
+      ],
+      "tr_type": "ТРГ",
+      "voltage": "110",
+      "source": "project_base",
+      "notes": "Базовый профиль проекта; заменить на подтвержденное паспортом значение при необходимости."
+    },
+    {
+      "category": "product",
+      "key": "brand",
+      "value": "ТРГ-УЭТМ-220",
+      "aliases": [
+        "заводской тип",
+        "марка",
+        "тип изделия"
+      ],
+      "tr_type": "ТРГ",
+      "voltage": "220",
+      "source": "project_base",
+      "notes": "Базовый профиль проекта; заменить на подтвержденное паспортом значение при необходимости."
+    },
+    {
+      "category": "policy",
+      "key": "unknown_value",
+      "value": "",
+      "source": "system",
+      "notes": "Не заполнять без достаточного основания в БД или контексте."
+    }
+  ],
+  "field_rules": [
+    {
+      "canonical_name": "Изготовитель",
+      "aliases": [
+        "производитель",
+        "изготовитель"
+      ],
+      "db_key": "manufacturer",
+      "priority": 200
+    },
+    {
+      "canonical_name": "Заводской тип",
+      "aliases": [
+        "марка",
+        "тип изделия",
+        "заводской тип"
+      ],
+      "db_key": "brand",
+      "priority": 200
+    },
+    {
+      "canonical_name": "Номинальное напряжение",
+      "aliases": [
+        "номинальное напряжение"
+      ],
+      "db_key": "nominal_voltage",
+      "data_type": "number",
+      "priority": 190
+    },
+    {
+      "canonical_name": "Климатическое исполнение",
+      "aliases": [
+        "климатическое исполнение",
+        "климат"
+      ],
+      "db_key": "climate",
+      "priority": 180
+    },
+    {
+      "canonical_name": "Вид внутренней изоляции",
+      "aliases": [
+        "внутренняя изоляция"
+      ],
+      "db_key": "internal_insulation",
+      "priority": 180
+    },
+    {
+      "canonical_name": "Тип внешней изоляции",
+      "aliases": [
+        "внешняя изоляция",
+        "тип внешней изоляции"
+      ],
+      "db_key": "external_insulation",
+      "priority": 180
+    },
+    {
+      "canonical_name": "Цвет внешней изоляции",
+      "aliases": [
+        "цвет изоляции",
+        "цвет внешней изоляции"
+      ],
+      "db_key": "external_insulation_color",
+      "priority": 180
+    },
+    {
+      "canonical_name": "Класс точности",
+      "aliases": [
+        "класс точности"
+      ],
+      "db_key": "accuracy_class",
+      "priority": 130
+    },
+    {
+      "canonical_name": "Номинальный ток первичной обмотки",
+      "aliases": [
+        "номинальный ток первичной обмотки"
+      ],
+      "db_key": "primary_current",
+      "priority": 150
+    }
+  ]
+}

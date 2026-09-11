@@ -1,0 +1,1010 @@
+"""Гибридное автозаполнение тендерных DOCX.
+
+Пайплайн:
+1. Алгоритм: для каждой строки ищем канонический ключ БЗ (FieldRule) и
+   берем значение из расширяемой базы знаний (KnowledgeEntry) или из
+   исторических справочников (TrTypeRule/VoltageClass/...). Такие значения
+   — константы, они не помечаются.
+2. AI-аудит: GigaChat получает ВЕСЬ контекст документа (все параграфы, все
+   таблицы, результат первого прохода, применимую БЗ) и перепроверяет
+   каждую строку.
+3. Слияние: значение нейросети принимается как "выведенное из контекста"
+   (source=AI_CONTEXT, mark="**") только если оно отличается от значения
+   алгоритма И уверенность модели не ниже AI_CONFIDENCE_THRESHOLD. Иначе
+   побеждает алгоритмическое/БД значение.
+4. Рядом с результатом сохраняется `<output>.audit.json` с источником,
+   уверенностью и причиной решения по каждой строке — по нему работает
+   tools/promote_audit.py для переноса подтвержденного значения в БЗ.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import uuid
+from copy import deepcopy
+from pathlib import Path
+from typing import Any
+
+from docx import Document
+from sqlalchemy.orm import Session
+
+from models.tr_type import (
+    AccuracyClass, Climat, IsolColor, IsolType, KnowledgeEntry, TrType, TrTypeRule, VoltageClass
+)
+from services.gigachat_client import (
+    AI_CONFIDENCE_THRESHOLD,
+    ask_json,
+    check_gigachat_connection,
+    open_client,
+    verify_connection,
+)
+from services.knowledge_base import build_knowledge_context, canonicalize_field, norm, resolve_db_field
+
+__all__ = ["process_docx_requirements", "check_gigachat_connection"]
+
+
+def _is_header_row(param_name: str, num: str = "", required_val: str = "") -> bool:
+    p = norm(param_name) if isinstance(param_name, str) else ""
+    r = norm(required_val) if isinstance(required_val, str) else ""
+    n = norm(num) if isinstance(num, str) else ""
+    # В некоторых Word-ТЗ заголовок раздела физически занимает все колонки,
+    # поэтому параметр == требуемому значению. Такой ряд нельзя автозаполнять.
+    section_header = bool(p and not n and r and p == r)
+    return (
+        section_header
+        or "наименование параметра" in p
+        or "технические требования к оборудованию" in p
+        or p.replace(".", "").strip().isdigit()
+        or (not p and n and n.replace(".", "").strip().isdigit())
+        or p.endswith(":")
+    )
+
+
+def extract_doc_items(doc: Document) -> tuple[list[dict], dict[str, Any]]:
+    """Извлекает строки таблиц ТЗ и полный текстовый контекст документа."""
+    items: list[dict] = []
+    mapping: dict[str, str] = {}
+    counter = 0
+    document_context: dict[str, Any] = {"paragraphs": [], "tables": []}
+
+    for p in doc.paragraphs:
+        text = p.text.strip()
+        if text:
+            document_context["paragraphs"].append(text)
+
+    for table_idx, table in enumerate(doc.tables):
+        table_rows = []
+        for row_idx, row in enumerate(table.rows):
+            cells = [c.text.strip() for c in row.cells]
+            if not any(cells):
+                continue
+            table_rows.append({"row": row_idx, "cells": cells})
+            if len(cells) < 3:
+                continue
+            num = cells[0]
+            param_name = cells[1]
+            if _is_header_row(param_name, num, cells[-2] if len(cells) >= 4 else cells[2]):
+                continue
+            required = cells[-2] if len(cells) >= 4 else cells[2]
+            target = cells[-1]
+            item_id = f"item_{counter}"
+            counter += 1
+            item = {
+                "id": item_id,
+                "table": table_idx,
+                "row": row_idx,
+                "num": num,
+                "param_name": param_name,
+                "required_val": required,
+                "current_value": target,
+            }
+            items.append(item)
+            mapping[item_id] = target
+        document_context["tables"].append(table_rows)
+
+    return items, {"document": document_context, "mapping": mapping}
+
+
+def _determine_type(session: Session, items: list[dict], document_context: dict[str, Any] | None = None) -> tuple[TrType, str | None]:
+    """Определяет тип только при наличии достаточного основания.
+
+    Старый ``rstrip('.0')`` был ошибочным: для строки ``110`` он давал ``11``.
+    Здесь напряжение сравнивается численно, а при нескольких подходящих типах
+    неоднозначность не скрывается выбором первой строки БД.
+    """
+    parts = [
+        f"{x.get('param_name', '')} {x.get('required_val', '')}"
+        for x in items
+    ]
+    if document_context:
+        parts.extend(document_context.get("paragraphs", []))
+        for table in document_context.get("tables", []):
+            for row in table:
+                parts.extend(row.get("cells", []))
+    text = " ".join(parts).lower()
+    voltage = None
+    for item in items:
+        p = norm(item.get("param_name", ""))
+        if "номинальн" in p and "напряж" in p:
+            m = re.search(r"\d+(?:[,.]\d+)?", str(item.get("required_val", "")))
+            if m:
+                voltage = m.group(0).replace(",", ".")
+                break
+
+    def voltage_equal(a: str, b: str) -> bool:
+        try:
+            return float(a.replace(",", ".")) == float(b.replace(",", "."))
+        except (ValueError, AttributeError):
+            return norm(a) == norm(b)
+
+    candidates = []
+    rules = session.query(TrTypeRule).all()
+    for rule in rules:
+        tr = session.query(TrType).filter_by(id=rule.tr_type_id).first()
+        if not tr:
+            continue
+        score = 0
+        if norm(tr.name) and norm(tr.name) in norm(text):
+            score += 100
+        volts = {
+            str(x.value)
+            for x in session.query(VoltageClass)
+            .filter(VoltageClass.id.in_(rule.voltage_classes or []))
+            .all()
+        }
+        if voltage and any(voltage_equal(voltage, v) for v in volts):
+            score += 50
+        candidates.append((score, tr, rule))
+
+    if voltage is None:
+        # Напряжение может находиться в заголовке документа, а не в строке ТЗ.
+        m = re.search(r"(?i)\b(\d+(?:[,.]\d+)?)\s*(?:кв|kv)\b", text)
+        if m:
+            voltage = m.group(1)
+
+    # Пересчитать кандидатов после извлечения напряжения из общего контекста.
+    if voltage is not None:
+        rescored = []
+        for _, tr, rule in candidates:
+            score = 0
+            if norm(tr.name) and norm(tr.name) in norm(text):
+                score += 100
+            volts = {
+                str(x.value)
+                for x in session.query(VoltageClass)
+                .filter(VoltageClass.id.in_(rule.voltage_classes or []))
+                .all()
+            }
+            if any(voltage_equal(voltage, v) for v in volts):
+                score += 50
+            rescored.append((score, tr, rule))
+        candidates = rescored
+
+    if not candidates:
+        raise ValueError("Не удалось определить тип трансформатора: в БД нет правил.")
+
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    best_score = candidates[0][0]
+    best = [x for x in candidates if x[0] == best_score]
+    if best_score <= 0 and len(candidates) > 1:
+        raise ValueError(
+            "Не удалось однозначно определить тип трансформатора: "
+            "в документе нет названия типа или распознанного напряжения."
+        )
+    if len(best) > 1:
+        names = ", ".join(x[1].name for x in best)
+        raise ValueError(f"Тип трансформатора определен неоднозначно: {names}.")
+    return best[0][1], voltage
+
+
+def _algorithm_fill(session: Session, items: list[dict], tr_type: TrType, voltage: str | None) -> list[dict]:
+    result = []
+    for item in items:
+        db_key = canonicalize_field(session, item["param_name"])
+        param_text = norm(item.get("param_name", ""))
+        item["db_key"] = db_key
+        value, source = (None, None)
+
+        # Изготовитель и заводской тип/марка — обязательные константы проекта.
+        # Для них дополнительно используем распознавание по названию строки,
+        # чтобы даже при неидеальном совпадении FieldRule значение не потерялось.
+        is_manufacturer = (
+            re.match(r"^(?:изготовител(?:ь|я|ем)?|производител(?:ь|я|ем)?)\b", param_text) is not None
+            or "завод-изготовитель" in param_text
+        )
+        is_brand = (
+            "заводской тип" in param_text
+            or "заводской тип марка" in param_text
+            or ("тип" in param_text and "марка" in param_text)
+        )
+        if is_manufacturer or db_key == "manufacturer":
+            value, source = resolve_db_field(session, "manufacturer", item["required_val"], None, None)
+            db_key = "manufacturer"
+        elif is_brand or db_key == "brand":
+            value, source = resolve_db_field(session, "brand", item["required_val"], tr_type.id, voltage)
+            db_key = "brand"
+        elif db_key:
+            value, source = resolve_db_field(session, db_key, item["required_val"], tr_type.id, voltage)
+
+        item["algorithm_value"] = value if value is not None else ""
+        item["algorithm_source"] = source or "NONE"
+        result.append(item.copy())
+    return result
+
+
+def _prompt_items(items: list[dict]) -> list[dict]:
+    """Возвращает только JSON-сериализуемые поля для AI-промпта.
+
+    Внутри рабочего item хранится python-docx Cell для записи результата.
+    Такие объекты нельзя передавать в json.dumps и, главное, нет смысла
+    отправлять модели. Это также защищает промпт от случайного появления
+    служебных объектов в будущем.
+    """
+    fields = (
+        "id", "table", "row", "num", "param_name", "required_val",
+        "current_value", "db_key", "algorithm_value", "algorithm_source",
+    )
+    result = []
+    for item in items:
+        row = {key: item.get(key) for key in fields}
+        if item.get("local_context"):
+            row["local_context"] = item["local_context"]
+        result.append(row)
+    return result
+
+
+def _is_db_source(source: str) -> bool:
+    """Определяет, является ли значение подтвержденным алгоритмической БЗ."""
+    return bool(source) and source not in {"NONE", "HEURISTIC", "FALLBACK_ECHO"}
+
+
+def _clean_ai_value(value: str) -> str:
+    """Очищает ответ AI от служебных звездочек/маркеров.
+
+    Маркер добавляет только программа. Поэтому 0,2**, 0,2*** и другие
+    варианты от самой модели превращаются в обычное значение 0,2.
+    """
+    value = str(value or "").strip()
+    if not value:
+        return ""
+    if re.fullmatch(r"\*+", value):
+        return ""
+    value = re.sub(r"\s*\*+\s*$", "", value).strip()
+    return value
+
+
+def _ai_mark_for_required(required_val: str) -> str:
+    """Возвращает корректный маркер для значения, выведенного нейросетью.
+
+    Если в левой колонке уже есть *, достаточно одной * в правой колонке.
+    Иначе значение, действительно выведенное AI и отсутствующее в БД,
+    получает стандартную отметку **.
+    """
+    raw = str(required_val or "").strip()
+    return "*" if "*" in raw else "**"
+
+
+def _fallback_from_requirement(required_val: str) -> str:
+    """Извлекает минимально пригодный ответ непосредственно из ТЗ.
+
+    Это аварийный, но детерминированный fallback для ситуации, когда GigaChat
+    не вернул строку. Мы не оставляем явное требование пустым: если слева
+    указано конкретное значение или текстовое требование, оно переносится
+    вправо. Служебные звездочки из левой колонки удаляются — маркер добавляет
+    только _ai_mark_for_required().
+    """
+    raw = str(required_val or "").replace("\r", "").strip()
+    if not raw:
+        return ""
+
+    # '*' и варианты вроде '**' — это признак свободного поля, а не значение.
+    cleaned = re.sub(r"\s*\*+\s*$", "", raw).strip()
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    cleaned = cleaned.strip(" /")
+    if not cleaned or re.fullmatch(r"\*+", cleaned):
+        return ""
+
+    # Если слева есть явный текст/число/единица — его можно использовать как
+    # исходный ответ. Не придумываем ничего сверх текста самого требования.
+    return cleaned
+
+
+def _values_equivalent(left: str, right: str) -> bool:
+    """Сравнивает ответы без ложных расхождений из-за формата записи."""
+    left = _clean_ai_value(left)
+    right = _clean_ai_value(right)
+
+    def normalize(value: str) -> str:
+        value = norm(value).replace(" ", "").replace(",", ".")
+        value = re.sub(r"(?i)(кв|ка|а|в)$", "", value)
+        return value
+    return normalize(left) == normalize(right)
+
+
+def _legacy_db_values(session: Session, tr_type: TrType, key: str) -> set[str]:
+    """Возвращает все допустимые константы старых справочников БД."""
+    rule = session.query(TrTypeRule).filter_by(tr_type_id=tr_type.id).first()
+    if not rule:
+        return set()
+
+    def names(model, ids):
+        column = getattr(model, "name", None) or getattr(model, "value", None)
+        if column is None:
+            return []
+        return [str(x[0]) for x in session.query(column).filter(model.id.in_(ids or [])).all()]
+
+    if key == "nominal_voltage":
+        return set(names(VoltageClass, rule.voltage_classes))
+    if key == "climate":
+        return set(names(Climat, rule.climats))
+    if key in {"internal_insulation", "external_insulation"}:
+        return set(names(IsolType, rule.isol_types))
+    if key == "external_insulation_color":
+        return set(names(IsolColor, rule.isol_colors))
+    if key == "accuracy_class":
+        return set(names(AccuracyClass, rule.accuracy_classes))
+    return set()
+
+
+def _is_known_db_value(session: Session, item: dict, value: str, tr_type: TrType, voltage: str | None) -> bool:
+    """Проверяет, есть ли значение среди применимых констант БД.
+
+    Проверка намеренно шире canonical field строки: если AI вывел, например,
+    0,2 / 0,2S / 10PR / 220 / У1, а такое значение уже есть в БД текущего
+    проекта, маркер ** ставить нельзя.
+    """
+    value = _clean_ai_value(value)
+    if not value:
+        return False
+
+    keys = []
+    if item.get("db_key"):
+        keys.append(item["db_key"])
+    keys.extend([
+        "nominal_voltage", "climate", "internal_insulation",
+        "external_insulation", "external_insulation_color", "accuracy_class",
+    ])
+
+    # KnowledgeEntry — расширяемая БД проекта.
+    for row in session.query(KnowledgeEntry).filter_by(active=True).all():
+        if row.tr_type_id not in (None, tr_type.id):
+            continue
+        if row.voltage and (not voltage or str(row.voltage) != str(voltage)):
+            continue
+        if row.value and _values_equivalent(value, str(row.value)):
+            return True
+
+    # Legacy-справочники.
+    for key in dict.fromkeys(keys):
+        for known in _legacy_db_values(session, tr_type, key):
+            if known and _values_equivalent(value, known):
+                return True
+    return False
+
+
+def _is_blank_target(item: dict) -> bool:
+    return not str(item.get("current_value", "") or "").strip()
+
+
+def _constraint_text(text: str) -> bool:
+    t = norm(text)
+    return any(x in t for x in (
+        "не менее", "не более", "в соответствии", "согласно",
+        "должен", "должны", "обязательно", "указать", "определить проектом",
+    ))
+
+
+def _fact_value(value: str, required: str = "") -> str:
+    """Возвращает значение, пригодное как внутренний факт документа.
+
+    Не используем строки вида «не менее 1000», «указать», «обязательно» как
+    фактические значения. Точные значения вроде 110, 50, У1, Фарфор сохраняем.
+    """
+    value = re.sub(r"\s+", " ", str(value or "")).strip()
+    required = re.sub(r"\s+", " ", str(required or "")).strip()
+    if not value or _constraint_text(value):
+        return ""
+    if value.lower() in {"да", "нет", "не требуется", "не относится"}:
+        return value
+    if _constraint_text(required) and _values_equivalent(value, required):
+        return ""
+    return value
+
+
+def _tokens(text: str) -> set[str]:
+    stop = {
+        "и", "в", "на", "для", "по", "из", "с", "к", "а", "от", "до",
+        "при", "не", "кв", "гц", "а", "ва", "мм", "м", "с", "шт",
+    }
+    return {
+        x for x in re.findall(r"[а-яa-z0-9]+", norm(text), flags=re.I)
+        if len(x) > 2 and x not in stop
+    }
+
+
+def _param_similarity(a: str, b: str) -> float:
+    from difflib import SequenceMatcher
+    ta, tb = _tokens(a), _tokens(b)
+    if not ta or not tb:
+        return 0.0
+    overlap = len(ta & tb) / max(1, min(len(ta), len(tb)))
+    seq = SequenceMatcher(None, norm(a), norm(b)).ratio()
+    return max(overlap, seq)
+
+
+def _has_engineering_conflict(a: str, b: str) -> bool:
+    """Запрещает перенос между разными семействами одной характеристики."""
+    a, b = norm(a), norm(b)
+    families = [
+        ("удельная длина пути утечки",),
+        ("номинальный ток первичной", "первичный ток"),
+        ("номинальный вторичный ток", "вторичный ток"),
+        ("ток термической стойкости", "термической стойкости"),
+        ("ток динамической стойкости", "динамической стойкости"),
+        ("ток отключения", "номинальный ток отключения"),
+        ("номинальное напряжение", "номинальная частота", "испытательное напряжение", "наибольшее напряжение"),
+        ("высота установки", "высота металлоконструкций"),
+        ("тип внешней изоляции", "вид изоляции", "удельная длина пути утечки"),
+    ]
+    # Сильный маркер встречается только в одном из двух названий — строки
+    # относятся к разным полям и не могут служить аналогом.
+    for group in families:
+        hits_a = [x for x in group if x in a]
+        hits_b = [x for x in group if x in b]
+        if bool(hits_a) != bool(hits_b):
+            return True
+    return False
+
+
+def _build_self_context(items: list[dict], extra: dict[str, Any]) -> dict[str, Any]:
+    """Строит компактный профиль только из фактов самого документа."""
+    facts = []
+    for x in items:
+        if not _is_blank_target(x):
+            value = _fact_value(x.get("current_value", ""), x.get("required_val", ""))
+            if value:
+                facts.append({
+                    "id": x["id"],
+                    "table": x["table"],
+                    "row": x["row"],
+                    "num": x.get("num", ""),
+                    "param_name": x.get("param_name", ""),
+                    "value": value,
+                })
+
+    paragraphs = [re.sub(r"\s+", " ", str(x)).strip() for x in extra.get("paragraphs", []) if str(x).strip()]
+    # В профиль попадают только информативные фразы: названия объекта,
+    # оборудования, типы, напряжения, производители и т.п.
+    important = []
+    for text in paragraphs:
+        low = norm(text)
+        if any(k in low for k in (
+            "трансформатор", "выключатель", "тфнд", "трг", "110 кв", "220 кв",
+            "изготовител", "производител", "пс ", "подстанц",
+        )):
+            important.append(text[:1000])
+
+    # Глобальный профиль: только ключевые факты, а не весь документ.
+    priority_terms = (
+        "изготовител", "производител", "заводской тип", "марка", "трг",
+        "номинальное напряжение", "номинальная частота", "климатическое",
+        "изоляц", "первичный ток", "вторичный ток", "вторичных обмоток",
+        "сейсмостойкость", "высота установки",
+    )
+    global_facts = []
+    used = set()
+    for fact in facts:
+        key = norm(fact.get("param_name", ""))
+        if any(term in key for term in priority_terms):
+            if fact["id"] not in used:
+                global_facts.append(fact)
+                used.add(fact["id"])
+    for fact in facts:
+        if len(global_facts) >= 24:
+            break
+        if fact["id"] not in used:
+            global_facts.append(fact)
+            used.add(fact["id"])
+    return {
+        "document_facts": facts,
+        "global_facts": global_facts[:24],
+        "key_paragraphs": important[:15],
+    }
+
+
+def _find_self_context_value(item: dict, all_items: list[dict], *, min_score: float = 0.92) -> tuple[str, str, list[str]]:
+    """Ищет однозначный аналог параметра внутри ЭТОГО ЖЕ документа."""
+    target = norm(item.get("param_name", ""))
+    if not target:
+        return "", "", []
+    candidates = []
+    for x in all_items:
+        if x.get("id") == item.get("id") or _is_blank_target(x):
+            continue
+        value = _fact_value(x.get("current_value", ""), x.get("required_val", ""))
+        if not value:
+            continue
+        if _has_engineering_conflict(target, x.get("param_name", "")):
+            continue
+        raw_score = _param_similarity(target, x.get("param_name", ""))
+        score = raw_score
+        # Не даем общим словам вроде «ток», «изоляция», «напряжение»
+        # склеивать разные инженерные характеристики. Каноническое поле
+        # усиливает совпадение только при уже достаточно близком названии.
+        if norm(item.get("db_key", "")) and norm(item.get("db_key", "")) == norm(x.get("db_key", "")) and raw_score >= 0.72:
+            score += 0.20
+        t_num = str(item.get("num", ""))
+        x_num = str(x.get("num", ""))
+        sub_same = bool(t_num and x_num and t_num.split(".")[-1:] == x_num.split(".")[-1:])
+        if sub_same and raw_score >= 0.72:
+            score += 0.12
+        if score >= min_score:
+            candidates.append((score, x, value))
+    candidates.sort(key=lambda z: z[0], reverse=True)
+    if not candidates:
+        return "", "", []
+    best_score = candidates[0][0]
+    best = [x for x in candidates if x[0] >= best_score - 0.03]
+    values = {norm(x[2]) for x in best}
+    if len(values) != 1:
+        return "", "", []
+    source = best[0][1]
+    return best[0][2], "SELF_CONTEXT", [source["id"]]
+
+
+def _build_target_context(item: dict, all_items: list[dict], self_profile: dict[str, Any]) -> dict[str, Any]:
+    target = norm(item.get("param_name", ""))
+    scored = []
+    for fact in self_profile.get("document_facts", []):
+        score = _param_similarity(target, fact.get("param_name", ""))
+        if score >= 0.25:
+            scored.append((score, fact))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    related = [fact for _, fact in scored[:6]]
+
+    same_section = []
+    table = item.get("table")
+    row = item.get("row", 0)
+    for x in all_items:
+        if x.get("id") == item.get("id") or x.get("table") != table or _is_blank_target(x):
+            continue
+        if abs(int(x.get("row", 0)) - int(row)) <= 4:
+            value = _fact_value(x.get("current_value", ""), x.get("required_val", ""))
+            if value:
+                same_section.append({
+                    "id": x["id"], "num": x.get("num", ""),
+                    "param_name": x.get("param_name", ""), "value": value,
+                })
+    return {"related_facts": related[:4], "nearby_facts": same_section[:4]}
+
+
+def _prepare_ai_targets(items: list[dict], self_profile: dict[str, Any]) -> tuple[list[dict], list[dict]]:
+    """Сначала закрывает однозначные пропуски контекстом, AI получает только остаток."""
+    ai_targets = []
+    self_filled = []
+    for item in items:
+        if not _is_blank_target(item):
+            continue
+        # Пустая строка без номера, требования, БЗ-ключа или алгоритмического
+        # признака чаще является визуальным/разделительным рядом, а не полем.
+        if not (str(item.get("num", "")).strip() or str(item.get("required_val", "")).strip() or str(item.get("db_key", "")).strip()):
+            item["pre_ai_value"] = ""
+            item["pre_ai_source"] = "SKIP_NON_FIELD"
+            item["pre_ai_evidence"] = []
+            continue
+        value, source, evidence = _find_self_context_value(item, items)
+        if value:
+            item["pre_ai_value"] = value
+            item["pre_ai_source"] = source
+            item["pre_ai_evidence"] = evidence
+            self_filled.append(item)
+        else:
+            item["pre_ai_value"] = ""
+            item["pre_ai_source"] = ""
+            item["pre_ai_evidence"] = []
+            ai_targets.append(item)
+    return ai_targets, self_filled
+
+
+def _compact_ai_profile(self_profile: dict[str, Any], max_facts: int = 80) -> dict[str, Any]:
+    return {
+        "key_paragraphs": self_profile.get("key_paragraphs", [])[:20],
+        "document_facts": self_profile.get("document_facts", [])[:max_facts],
+    }
+
+
+def _build_ai_prompt(target_items: list[dict], all_items: list[dict], self_profile: dict[str, Any], kb_context: dict) -> str:
+    targets = []
+    for item in target_items:
+        targets.append({
+            "id": item["id"],
+            "num": item.get("num", ""),
+            "param_name": item.get("param_name", ""),
+            "required_val": item.get("required_val", ""),
+            "context": _build_target_context(item, all_items, self_profile),
+        })
+    compact_kb = kb_context.get("entries", [])[:20]
+    return (
+        "Ты инженер по высоковольтному электрооборудованию. Заполни ТОЛЬКО пустые поля.\n"
+        "Главное правило: значение бери из самого документа; required_val — это требование, а не готовый ответ.\n"
+        "Не повторяй пороги 'не менее/не более', если документ не подтверждает точное фактическое значение.\n"
+        "Используй прежде всего: 1) точный аналог параметра в текущем документе; 2) связанные факты этого документа; "
+        "3) только после этого применимую БЗ. Если точного значения нет — value=''. Никаких выдуманных чисел.\n"
+        "Не заполняй уже имеющиеся ответы и не меняй смысл параметра.\n\n"
+        "КЛЮЧЕВЫЕ ФАКТЫ ТЕКУЩЕГО ДОКУМЕНТА:\n"
+        f"{json.dumps({'key_paragraphs': self_profile.get('key_paragraphs', [])[:10], 'global_facts': self_profile.get('global_facts', [])[:24]}, ensure_ascii=False, separators=(',', ':'))}\n\n"
+        "ПРИМЕНИМАЯ БЗ:\n"
+        f"{json.dumps(compact_kb, ensure_ascii=False, separators=(',', ':'))}\n\n"
+        "ПУСТЫЕ ПОЛЯ:\n"
+        f"{json.dumps(targets, ensure_ascii=False, separators=(',', ':'))}\n\n"
+        "Верни строго JSON-объект по всем id: "
+        '{"item_1":{"value":"...","source":"SELF_CONTEXT|AI_CONTEXT|DB|NONE","confidence":0.0,"evidence":["item_2"],"reason":"..."}}.'
+    )
+
+
+def _ai_review(client, items: list[dict], self_profile: dict[str, Any], kb_context: dict, chunk_size: int = 24) -> dict[str, dict]:
+    """Один компактный AI-проход только по реально пустым строкам."""
+    pending = [x for x in items if _is_blank_target(x) and x.get("pre_ai_source") != "SKIP_NON_FIELD" and not x.get("pre_ai_value")]
+    if not pending:
+        return {}
+
+    merged: dict[str, dict] = {}
+    for start in range(0, len(pending), chunk_size):
+        chunk = pending[start:start + chunk_size]
+        prompt = _build_ai_prompt(chunk, items, self_profile, kb_context)
+        try:
+            part = ask_json(client, prompt)
+            ids = {x["id"] for x in chunk}
+            for key, value in part.items():
+                if key in ids and isinstance(value, dict):
+                    merged[key] = value
+            missing = ids - set(merged)
+            if missing:
+                print(f"[GigaChat] chunk {start + 1}-{start + len(chunk)}: без ответа {sorted(missing)}")
+        except Exception as exc:
+            print(f"[GigaChat] chunk {start + 1}-{start + len(chunk)} failed: {exc}")
+    return merged
+
+
+def _is_constraint_like_required(required_val: str, param_name: str = "") -> bool:
+    """True для требований, которые нельзя механически копировать как предложение."""
+    raw = norm(required_val)
+    p = norm(param_name)
+    if not raw or raw == "*":
+        return True
+    if any(x in raw for x in ("не менее", "не более", "в соответствии", "согласно", "должен", "должны", "обязательно", "требуется")):
+        return True
+    if "предел" in p or "сопротивлен" in p or "ток" in p or "нагруз" in p:
+        # Числовые поля с ограничением лучше заполнять фактическим значением
+        # из профиля/контекста, а не просто повторять порог ТЗ.
+        return bool(re.search(r"\d", raw))
+    return False
+
+
+def _same_requirement_value(required_val: str, ai_value: str) -> bool:
+    r = _clean_ai_value(required_val)
+    a = _clean_ai_value(ai_value)
+    return bool(r and a and _values_equivalent(r, a))
+
+
+def _context_validation(item: dict, value: str, all_items: list[dict], *, document_context: dict | None = None) -> tuple[bool, str]:
+    """Проверяет очевидные логические противоречия ответа с остальным ТЗ."""
+    value = _clean_ai_value(value)
+    if not value:
+        return True, ""
+    p = norm(item.get("param_name", ""))
+
+    def first_number(text: str) -> float | None:
+        m = re.search(r"[-+]?\d+(?:[,.]\d+)?", str(text))
+        if not m:
+            return None
+        try:
+            return float(m.group(0).replace(",", "."))
+        except ValueError:
+            return None
+
+    # Связка "номинальное напряжение" / "наибольшее напряжение".
+    if "наибольшее" in p and "напряж" in p:
+        nominal = next((x for x in all_items if "номинальн" in norm(x.get("param_name", "")) and "напряж" in norm(x.get("param_name", ""))), None)
+        n = first_number((nominal or {}).get("algorithm_value") or (nominal or {}).get("required_val", "")) if nominal else None
+        a = first_number(value)
+        if n is not None and a is not None and a < n:
+            return False, f"Наибольшее напряжение {a:g} не может быть меньше номинального {n:g}."
+
+    # Температуры: верхняя не должна быть ниже нижней.
+    if "верхнее рабочее" in p and "температур" in p:
+        low = next((x for x in all_items if "нижнее рабочее" in norm(x.get("param_name", "")) and "температур" in norm(x.get("param_name", ""))), None)
+        lo = first_number((low or {}).get("algorithm_value") or (low or {}).get("required_val", "")) if low else None
+        hi = first_number(value)
+        if lo is not None and hi is not None and hi < lo:
+            return False, f"Верхняя температура {hi:g} не может быть ниже нижней {lo:g}."
+
+    if "нижнее рабочее" in p and "температур" in p:
+        high = next((x for x in all_items if "верхнее рабочее" in norm(x.get("param_name", "")) and "температур" in norm(x.get("param_name", ""))), None)
+        hi = first_number((high or {}).get("algorithm_value") or (high or {}).get("required_val", "")) if high else None
+        lo = first_number(value)
+        if hi is not None and lo is not None and hi < lo:
+            return False, f"Нижняя температура {lo:g} не может быть выше верхней {hi:g}."
+
+    # Для полей с явным ограничением не принимаем дословный повтор порога,
+    # если нет дополнительного подтверждающего контекста.
+    if _is_constraint_like_required(item.get("required_val", ""), item.get("param_name", "")) and _same_requirement_value(item.get("required_val", ""), value):
+        req = norm(item.get("required_val", ""))
+        if any(x in req for x in ("не менее", "не более", "в соответствии", "согласно")):
+            return False, "Ответ дословно повторяет ограничение ТЗ, а не фактическое значение характеристики."
+    return True, ""
+
+
+def _set_cell_text(cell, value: str, mark: str) -> None:
+    """Записывает значение в ячейку, сохраняя базовое оформление."""
+    value = _clean_ai_value(value)
+    text = f"{value}{mark}" if value and mark else value
+    paragraphs = cell.paragraphs
+    if not paragraphs:
+        cell.text = text
+        return
+
+    paragraph = paragraphs[0]
+    template_rpr = None
+    if paragraph.runs and paragraph.runs[0]._r.rPr is not None:
+        template_rpr = deepcopy(paragraph.runs[0]._r.rPr)
+
+    for p in paragraphs:
+        for run in list(p.runs):
+            p._p.remove(run._r)
+    for p in paragraphs[1:]:
+        p._p.getparent().remove(p._p)
+
+    if text:
+        run = paragraph.add_run(text)
+        if template_rpr is not None:
+            run._r.insert(0, deepcopy(template_rpr))
+
+
+
+def _merge_algorithm_and_ai(
+    item: dict,
+    aid: dict,
+    *,
+    session: Session,
+    tr_type: TrType,
+    voltage: str | None,
+) -> tuple[str, str, str, float, str]:
+    """Сливает БД и AI с жестким правилом источника.
+
+    ** ставится ТОЛЬКО для значения, которое пришло от AI и не найдено
+    среди применимых констант БД. Если значение есть в БД — маркер снимается.
+    """
+    ai_value = _clean_ai_value(aid.get("value", ""))
+    try:
+        confidence = max(0.0, min(1.0, float(aid.get("confidence", 0) or 0)))
+    except (TypeError, ValueError):
+        confidence = 0.0
+    reason = str(aid.get("reason", "") or "").strip()
+    evidence = aid.get("evidence", []) or []
+    if not isinstance(evidence, list):
+        evidence = [str(evidence)]
+
+    valid_ai, validation_reason = _context_validation(item, ai_value, item.get("_all_items", []), document_context=None)
+    if not valid_ai:
+        ai_value = ""
+        confidence = 0.0
+        reason = (reason + " " if reason else "") + "AI-значение отклонено проверкой контекста: " + validation_reason
+    elif ai_value and str(aid.get("source", "AI_CONTEXT")) == "AI_CONTEXT" and confidence >= AI_CONFIDENCE_THRESHOLD and not evidence:
+        ai_value = ""
+        confidence = 0.0
+        reason = (reason + " " if reason else "") + "AI-значение отклонено: модель не указала контекстное основание (evidence)."
+
+    alg_value = _clean_ai_value(item.get("algorithm_value", ""))
+    alg_source = str(item.get("algorithm_source", "NONE") or "NONE")
+    alg_is_db = _is_db_source(alg_source)
+
+    # Значение, которое первым проходом подтверждено БД, неприкасаемо:
+    # AI не должен подменять один DB-констант другим допустимым значением.
+    if alg_value and alg_is_db:
+        return alg_value, "DB", "", confidence, reason
+
+    # Если AI самостоятельно вернул значение, которое уже есть в БД проекта,
+    # маркер также запрещен.
+    if ai_value and _is_known_db_value(session, item, ai_value, tr_type, voltage):
+        return ai_value, "DB", "", confidence, reason
+
+    if alg_value:
+        if _values_equivalent(ai_value, alg_value):
+            return alg_value, ("DB" if alg_is_db else alg_source), "", confidence, reason
+        # Любое уверенное AI-решение имеет приоритет над heuristic/requirement/fallback.
+        # Подтвержденная БД отсечена выше и сюда не попадает.
+        if ai_value and confidence >= AI_CONFIDENCE_THRESHOLD:
+            return ai_value, "AI_CONTEXT", _ai_mark_for_required(item.get("required_val", "")), confidence, reason
+        return alg_value, ("DB" if alg_is_db else alg_source), "", confidence, reason
+
+    # Пустое поле: сначала используем точное значение из самого документа,
+    # затем вывод AI. Оба источника имеют приоритет над аварийным переносом requirement.
+    if ai_value:
+        source_name = str(aid.get("source", "AI_CONTEXT") or "AI_CONTEXT")
+        if source_name == "SELF_CONTEXT":
+            return ai_value, "SELF_CONTEXT", "**", confidence, reason
+        return ai_value, "AI_CONTEXT", _ai_mark_for_required(item.get("required_val", "")), confidence, reason
+
+    # Если AI не вернул строку совсем, а в левой колонке есть явное требование,
+    # переносим его как запасной ответ и помечаем по обычному правилу. Это не
+    # выдумка модели: значение целиком взято из поля "Требуемое значение".
+    requirement_value = _fallback_from_requirement(item.get("required_val", ""))
+    if requirement_value:
+        req_mark = _ai_mark_for_required(item.get("required_val", ""))
+        return requirement_value, "REQUIREMENT", req_mark, 1.0, "Значение взято непосредственно из поля 'Требуемое значение', поскольку AI не вернул ответ."
+
+    return "", "NONE", "", confidence, reason
+
+
+def _fallback_from_requirement(required_val: str) -> str:
+    """Безопасный fallback: явное значение из колонки требований."""
+    value = str(required_val or "").strip()
+    if not value or re.fullmatch(r"\*+", value):
+        return ""
+    low = value.lower()
+    if "не требуется" in low:
+        return "Не требуется"
+    if re.search(r"\bтребуется\b", low):
+        return "Да"
+    if low in {"да", "нет"}:
+        return value
+    if low in {"обязательно", "обязателен", "обязательна", "обязательны"}:
+        return "Да"
+    if "не более" in low:
+        m = re.search(r"[-+]?\d+(?:[.,]\d+)?", value)
+        if m:
+            return m.group(0).replace(",", ".")
+    cleaned = re.sub(r"\s+", " ", value).strip()
+    if len(cleaned) <= 2 and not re.search(r"\d", cleaned):
+        return ""
+    return cleaned
+
+
+def process_docx_requirements(docx_path: str, output_path: str, session: Session) -> str:
+    if not Path(docx_path).exists():
+        raise FileNotFoundError(docx_path)
+
+    doc = Document(docx_path)
+    items, extra = extract_doc_items(doc)
+    tr_type, voltage = _determine_type(session, items, extra["document"])
+    algorithm_items = _algorithm_fill(session, items, tr_type, voltage)
+
+    # Полный снимок документа после первого (детерминированного) прохода.
+    filled_context = [
+        {k: item.get(k) for k in ["id", "table", "row", "num", "param_name", "required_val", "algorithm_value", "algorithm_source"]}
+        for item in algorithm_items
+    ]
+
+    for item in algorithm_items:
+        item["_all_items"] = algorithm_items
+        target_cell = doc.tables[item["table"]].rows[item["row"]].cells[-1]
+        item["target_cell"] = target_cell
+        if item["algorithm_value"]:
+            _set_cell_text(target_cell, str(item["algorithm_value"]), "")
+
+    kb_context = build_knowledge_context(session, tr_type.id, voltage)
+    self_profile = _build_self_context(algorithm_items, extra["document"])
+    ai_targets, self_filled = _prepare_ai_targets(algorithm_items, self_profile)
+    doc_context = {
+        **extra["document"],
+        "algorithm_pass": filled_context,
+        "detected": {"tr_type": tr_type.name, "voltage": voltage},
+        "self_profile": _compact_ai_profile(self_profile),
+    }
+
+    if __import__("os").getenv("TENDER_SKIP_AI", "0") == "1" or not ai_targets:
+        print("[GigaChat] AI-проход не требуется: TENDER_SKIP_AI=1 или все пропуски закрыты контекстом/БД")
+        audit = {}
+    else:
+        with open_client() as client:
+            # get_models()/verify_connection() — отдельный сетевой запрос.
+            # В рабочем контуре его не выполняем: chat-запрос сам проверит авторизацию.
+            if __import__("os").getenv("TENDER_VERIFY_GIGACHAT", "0") == "1":
+                verify_connection(client)
+            audit = _ai_review(client, algorithm_items, self_profile, kb_context)
+
+    audit_rows = []
+    marked = 0
+    unresolved: list[str] = []
+    for item in algorithm_items:
+        aid = audit.get(item["id"], {}) or {}
+        if item.get("pre_ai_value") and not aid.get("value"):
+            aid = {
+                "value": item["pre_ai_value"],
+                "source": "SELF_CONTEXT",
+                "confidence": 1.0,
+                "evidence": item.get("pre_ai_evidence", []),
+                "reason": "Значение однозначно перенесено из связанной строки текущего документа.",
+            }
+        evidence = aid.get("evidence", []) or []
+        if not isinstance(evidence, list):
+            evidence = [str(evidence)]
+        value, source, mark, confidence, reason = _merge_algorithm_and_ai(
+            item, aid, session=session, tr_type=tr_type, voltage=voltage
+        )
+
+        # Уже заполненный участником ответ по умолчанию не стираем.
+        if item.get("current_value") and __import__("os").getenv("TENDER_OVERWRITE_EXISTING", "0") != "1":
+            value = str(item["current_value"]).strip()
+            source, mark = "EXISTING_ANSWER", ""
+
+        # Если AI промолчал, используем явное требование из соседней колонки.
+        # Для значений, выведенных не из БД, ставится ** (или * при уже отмеченном *).
+        if not value:
+            requirement_value = _fallback_from_requirement(item.get("required_val", ""))
+            if requirement_value:
+                value = requirement_value
+                source, mark = "REQUIREMENT", _ai_mark_for_required(item.get("required_val", ""))
+
+        if not value and not _is_header_row(item["param_name"], item["num"], item.get("required_val", "")):
+            unresolved.append(item["id"])
+
+        # Защита от повторной генерации: не дублируем **/***.
+        value = _clean_ai_value(value)
+
+        if mark:
+            marked += 1
+        _set_cell_text(item["target_cell"], value, mark)
+        audit_rows.append(
+            {
+                "id": item["id"],
+                "num": item["num"],
+                "param_name": item["param_name"],
+                "required_val": item["required_val"],
+                "algorithm_value": item["algorithm_value"],
+                "algorithm_source": item["algorithm_source"],
+                "ai_value": _clean_ai_value(aid.get("value", "")),
+                "ai_source": str(aid.get("source", "") or ""),
+                "ai_mark": str(aid.get("mark", "") or ""),
+                "final_value": value,
+                "source": source,
+                "mark": mark,
+                "confidence": confidence,
+                "reason": reason,
+                "evidence": evidence,
+                "decision": ("DB_PRIORITY" if source == "DB" else "AI_OVERRIDE" if source == "AI_CONTEXT" else "ALGORITHM_OR_FALLBACK"),
+            }
+        )
+
+    out = Path(output_path)
+    doc.save(out)
+    audit_path = out.with_suffix(out.suffix + ".audit.json")
+    audit_path.write_text(
+        json.dumps(
+            {
+                "run_id": str(uuid.uuid4()),
+                "input": str(docx_path),
+                "output": str(out),
+                "detected_type": tr_type.name,
+                "voltage": voltage,
+                "rows": audit_rows,
+                "ai_marked_rows": marked,
+                "unresolved_rows": unresolved,
+                "self_context_filled_rows": len(self_filled),
+                "ai_candidate_rows": len(ai_targets),
+                "rules": {
+                    "DB_is_constant_source": True,
+                    "AI_context_mark": "**",
+                    "unknown_placeholders": "never",
+                    "star_in_required_value_uses_single_ai_mark": True,
+                    "star_does_not_block_context_fill": True,
+                    "requirement_fallback_when_ai_missing": True,
+                    "ai_confidence_threshold": AI_CONFIDENCE_THRESHOLD,
+                    "context_first": True,
+                    "ai_only_for_unresolved_blank_fields": True,
+                    "gigachat_connection_check_disabled_by_default": True,
+                },
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(f"[OK] DOCX сохранен: {out}")
+    print(
+        f"[OK] Аудит сохранен: {audit_path} "
+        f"(строк с mark='**': {marked}, без значения: {len(unresolved)})"
+    )
+    return str(out)
