@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QPushButton, QV
 from main import Session, process_document
 from bootstrap import bootstrap
 from services.document_tracker import DocumentTracker
+from services.pdf_word_edit import prepare_pdf_for_word_editing
 
 
 class MainWindow(QWidget):
@@ -82,12 +83,24 @@ class MainWindow(QWidget):
             if result:
                 self.processed = True
                 print(result)
-                # Наблюдаем именно за результатом, который инженер будет править.
-                # Для .docx это прямой файл; старые форматы обучаем через конвертацию
-                # отдельно, чтобы не читать бинарный .doc как DOCX.
-                if self.output_file.suffix.lower() == ".docx":
+
+                if self.output_file.suffix.lower() == ".pdf":
+                    # Вариант 2: инженер редактирует результат в Microsoft Word.
+                    # После закрытия Word tracker конвертирует изменённый DOCX
+                    # обратно в исходный PDF и записывает исправления в БЗ.
+                    editable = self.output_file.with_name(
+                        self.output_file.stem + "_для_редактирования.docx"
+                    )
+                    editable = prepare_pdf_for_word_editing(self.output_file, editable)
+                    print(f"[PDF/WORD] Создана редактируемая копия: {editable}")
+                    self.tracker.watch(editable, pdf_target=self.output_file)
+                    QDesktopServices.openUrl(QUrl.fromLocalFile(str(editable)))
+
+                elif self.output_file.suffix.lower() == ".docx":
                     self.tracker.watch(self.output_file)
-                QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.output_file)))
+                    QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.output_file)))
+                else:
+                    QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.output_file)))
         except Exception as exc:
             print(f"[PROCESS] Ошибка: {exc}")
 
@@ -104,7 +117,20 @@ class MainWindow(QWidget):
             print(f"Выбран файл: {file_name}")
 
     def open_file(self):
-        if self.output_file and self.output_file.exists():
+        if not self.output_file:
+            print("Файл ещё не обработан или не существует!")
+            return
+
+        # Для PDF открываем именно Word-компаньон, если он уже создан.
+        if self.output_file.suffix.lower() == ".pdf":
+            editable = self.output_file.with_name(
+                self.output_file.stem + "_для_редактирования.docx"
+            )
+            if editable.exists():
+                QDesktopServices.openUrl(QUrl.fromLocalFile(str(editable)))
+                return
+
+        if self.output_file.exists():
             QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.output_file)))
         else:
             print("Файл ещё не обработан или не существует!")

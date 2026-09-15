@@ -7,6 +7,7 @@ SecureString и передает только текущему процессу)
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -14,8 +15,10 @@ from typing import Any
 
 try:
     from gigachat import GigaChat
+    from gigachat.models import ChatCompletionRequest, ChatMessage, ChatContentPart
 except ImportError:  # позволяет запускать OCR/детерминированный режим без SDK
     GigaChat = None
+    ChatCompletionRequest = ChatMessage = ChatContentPart = None
 
 GIGACHAT_CREDENTIALS = os.getenv("GIGACHAT_CREDENTIALS", "MDFhMDY2YWMtZDc1Ni03NTc0LTg4MDEtMzJmYmY2YTY2MDkwOjZkMjFiMmI3LTY4MGItNGUyZS05YjQ4LWViY2E4NjIwMGU0Nw==").strip()
 if GIGACHAT_CREDENTIALS.lower().startswith("bearer "):
@@ -152,4 +155,38 @@ def parse_json_response(text: str) -> dict[str, Any]:
 def ask_json(client: GigaChat, prompt: str) -> dict[str, Any]:
     """Отправляет промпт и парсит строго-JSON ответ."""
     response = client.chat.create(prompt)
+    return parse_json_response(extract_text(response))
+
+
+def ask_vision_json(
+    client: GigaChat,
+    image_bytes: bytes,
+    user_prompt: str,
+    *,
+    mime_type: str = "image/png",
+) -> dict[str, Any]:
+    """Анализирует изображение GigaChat Vision и возвращает JSON.
+
+    Изображение передаётся в исходном качестве через data URI, поэтому Vision
+    видит таблицы, схемы и мелкие технические обозначения лучше, чем OCR
+    локального Tesseract.
+    """
+    if GigaChat is None or ChatCompletionRequest is None:
+        raise RuntimeError("Для GigaChat Vision необходим пакет gigachat с поддержкой multimodal messages.")
+    if not image_bytes:
+        raise ValueError("image_bytes пустой.")
+    encoded = base64.b64encode(image_bytes).decode("ascii")
+    data_url = f"data:{mime_type};base64,{encoded}"
+    request = ChatCompletionRequest(
+        messages=[
+            ChatMessage(
+                role="user",
+                content=[
+                    ChatContentPart(type="text", text=user_prompt),
+                    ChatContentPart(type="image_url", image_url={"url": data_url}),
+                ],
+            )
+        ]
+    )
+    response = client.chat.create(request)
     return parse_json_response(extract_text(response))

@@ -1,0 +1,2661 @@
+{
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx": {
+    "signature": "1789362472080283900:3194430",
+    "images": []
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx": {
+    "signature": "1789362472370093600:6145769",
+    "images": []
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx": {
+    "signature": "1789362472619766200:4257319",
+    "images": []
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image1.wmf::e3bcecc3da1ce3f8bca0bf8238de3b358827e812": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ui 100",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ui 100",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image1.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image2.wmf::a7577d2030287c92de47d13414a7ba2944545c82": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ЕЕ ЕЕ еее.",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ЕЕ ЕЕ еее.",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image2.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image3.png::2676d5d81de160fc70a42733037af164e26f1ffd": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image3.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image4.png::642b77b505d082e37c1657ad2182b7bb1e4a8124": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image4.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image5.wmf::e45c630dfaa4cdc9a81d101d3f5616752772562a": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image5.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image6.png::019cd77c86fa79a23865294ffac06b64d1d14c16": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "|2.",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "|2.",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image6.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image7.jpeg::0fea8f23ee6f159fb5e4bd0880af0054bd7e47ab": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "yu TTO Л2 ТТИ Cw И1 И? $1 Sn Л1 Л2 И? V1 СО ЕО р ® Л1 И! И? Л2",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "yu TTO Л2 ТТИ Cw И1 И? $1 Sn Л1 Л2 И? V1 СО ЕО р ® Л1 И! И? Л2",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image7.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image8.wmf::2a30059a930e0657fce7e2b23e90763466ed4809": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image8.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image9.wmf::7368b27478044e843da7db5917fdb86d0918f722": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "100 Та",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "100 Та",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image9.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image10.png::7937104aba913af4a2fd25a835dc95be65551b9f": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "нам. 1н-Кур",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "нам. 1н-Кур",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image10.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image11.jpeg::649a1701ceed6915ff9a763b72aab5faa82a8302": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "и = Um Sin(wt ) и) тт i@",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "и = Um Sin(wt ) и) тт i@",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image11.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image12.jpeg::371745a7a6f79800b558173339cfeaebccb91472": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "vf Vv у a",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "vf Vv у a",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image12.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image13.wmf::0be31b970d33bd48658b384776b120cd64486d3f": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "foe iyi",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "foe iyi",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image13.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image14.wmf::0f6c21869bd7c8a377b5f21315f49d6d62d39745": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image14.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image15.wmf::a6464154ee8d0e9fe6652cfef4eabf30668caf1e": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "% 100% и.",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "% 100% и.",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image15.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image16.jpeg::91674b1db8216fabb261d80042932cc10de3e71b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Vsat +,",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Vsat +,",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image16.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image17.jpeg::c707ecdd37a08250ed398f88b701a8df4cfddb55": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "т R B 2“ тт о Е iO",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "т R B 2“ тт о Е iO",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image17.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image18.jpeg::9f39e494f0d28d4d6f9908bdaee1e45bb4bd29af": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "120 и (В) 100 80 0 40 20 -20 540 -80 -в0 (А) 25 20 15 10 # (мс) 6 6 10 15 20 25",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "120 и (В) 100 80 0 40 20 -20 540 -80 -в0 (А) 25 20 15 10 # (мс) 6 6 10 15 20 25",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image18.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image19.jpeg::c0f8abaabadd2b1b1a518f86dd26f942b0d25f18": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Ра Yr",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Ра Yr",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image19.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image20.png::b29736ed988be7cf9dfcb275d7206617def01dbe": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "+ Wsat 70% Psat 20% Psat Famax20 Tmax70",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "+ Wsat 70% Psat 20% Psat Famax20 Tmax70",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image20.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image21.wmf::ae27c545b34b8cb0c4bf3cbf0e5d614f1a4b16f7": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "О... р а Е.",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "О... р а Е.",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image21.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image22.wmf::d0976bdb3403be41a252bac134ddf2acba0a7409": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image22.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image23.jpeg::7ecd2606669905dcb3eca62df9fbd8e94ddc9b56": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ty tis 32 мн",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ty tis 32 мн",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image23.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image24.wmf::438f4accaedae26f381179c793e07f739d0e7678": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "a",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "a",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image24.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image25.jpeg::101dd815eb3eb42cf7467356b66dcf2e84f01274": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "© Om Чо",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "© Om Чо",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image25.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image26.wmf::e993e97d4e03103e5c52ec366bda830582aec5ce": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": ". 100",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": ". 100",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image26.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image27.png::4b57d0a881dae319a0ddc78c03353f2b4b4924c3": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "702 507 А mp 4 Л2 т | ВЕРУ La |i aT 5 ||| == ТЕ [55 10 © Болт заземляющий © | =] 320 = 302 505 30 bt 8 13 280 A 3 016$ 228 Вывод первичной обмотки aN > {nod кабельные Ввод) #8 16 = Ш 45 van in © a id fans an cP‘ Ie и ©",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "702 507 А mp 4 Л2 т | ВЕРУ La |i aT 5 ||| == ТЕ [55 10 © Болт заземляющий © | =] 320 = 302 505 30 bt 8 13 280 A 3 016$ 228 Вывод первичной обмотки aN > {nod кабельные Ввод) #8 16 = Ш 45 van in © a id fans an cP‘ Ie и ©",
+    "models": [
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image27.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image28.jpeg::9863ade18f1a3b36bd81985a0d3847c6389a8348": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "702 410 Al awa М 12 Lo ]] 12 рт О ОО п =_= 0 == == =/S Sle a 9 i a a i] 0 a | 320 FF | 503 BI $8 3 016$ 228 А o\\ EF -S о +~=s-_— (под кобольный fbod) Выбой первичной обмотки = п. ay Га» в & B = 9 | р =] НА о \\",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "702 410 Al awa М 12 Lo ]] 12 рт О ОО п =_= 0 == == =/S Sle a 9 i a a i] 0 a | 320 FF | 503 BI $8 3 016$ 228 А o\\ EF -S о +~=s-_— (под кобольный fbod) Выбой первичной обмотки = п. ay Га» в & B = 9 | р =] НА о \\",
+    "models": [
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image28.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image29.jpeg::8b6637730fb423be4bc5df0b208b9627a09d4d57": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "630 19 во ol ©} At В i fi A Е- nee SS te 12 = — ен [р 1 Еее * be tid li od Trt if TL Tt И 10 Mt | И ay и: т we $9 Болт заземляющий M16 af Е 35 360 388 538 16 Заглушки 0 оснобаний не показаны: sexe A oS Выводы первичной обмотки 22 5. 60. тб. ый т 240 ; cs als Du #8 gs 2 тб 8 О 7a% ge «Я 6 ond. ши $228 ont @ 37.2 (nod кабельный 8608) © (под кабельный 0608) о-вов Е",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "630 19 во ol ©} At В i fi A Е- nee SS te 12 = — ен [р 1 Еее * be tid li od Trt if TL Tt И 10 Mt | И ay и: т we $9 Болт заземляющий M16 af Е 35 360 388 538 16 Заглушки 0 оснобаний не показаны: sexe A oS Выводы первичной обмотки 22 5. 60. тб. ый т 240 ; cs als Du #8 gs 2 тб 8 О 7a% ge «Я 6 ond. ши $228 ont @ 37.2 (nod кабельный 8608) © (под кабельный 0608) о-вов Е",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image29.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image30.png::fdf199c7c2b0ddf8ee2a3731b2c3ba565ab48c28": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "89 526 во 12 At oe rt 1 jae +Q— + 12 a ЕЕ ot и 1 =o GSS 6 & 2 - LE М | | od Е ЕТ Trt sas 10 О О о fit we oy Болт заземляющий M16 < Е 8 360 Е 388 538 16 Заглушки 0 оснобаним не показаны Выводы первичной обмотки $75 5. 50 22 ond. 1, es als 240 ; Du $8 88 $ в. © $ ge ae «Я 6 ond. 228) ши (под кабельный 6609) (од кабельный 660) ont. $372 20 ЭФ",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "89 526 во 12 At oe rt 1 jae +Q— + 12 a ЕЕ ot и 1 =o GSS 6 & 2 - LE М | | od Е ЕТ Trt sas 10 О О о fit we oy Болт заземляющий M16 < Е 8 360 Е 388 538 16 Заглушки 0 оснобаним не показаны Выводы первичной обмотки $75 5. 50 22 ond. 1, es als 240 ; Du $8 88 $ в. © $ ge ae «Я 6 ond. 228) ши (под кабельный 6609) (од кабельный 660) ont. $372 20 ЭФ",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image30.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image31.jpeg::b3f8bf2b4f40725371521186e67dc80a2d6f9ff6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "8 ti => 2 4 А} _— = Aq [ВА ‚|2 ГЫ id ie Ч i Ss =} В) | I ВЕРЯ 2 re |,” ниши, нии. . ии. a ини. ини: ии. ии, 5 т т 1 Sie Ee Ee = 10 пр И ПО О У’ ПО ОО ——— шика 511 oy Г: = Болт заземляющий С №16 м | а 80 150. 651 720 © 228 20тв.@ 372 под кабельный 26 6600 seco css 8600 ария Вывод первичной обмотки 4 отб. 25. 60 — © D 14 4 отб. Ф- -Ф во. — $ |= pny, = --D 218 = 6 ат. © ‚_ В 25. 60 я о о = Отличия в конструкции: НИЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 вре! | ©. раны реишенииы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330 460",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "8 ti => 2 4 А} _— = Aq [ВА ‚|2 ГЫ id ie Ч i Ss =} В) | I ВЕРЯ 2 re |,” ниши, нии. . ии. a ини. ини: ии. ии, 5 т т 1 Sie Ee Ee = 10 пр И ПО О У’ ПО ОО ——— шика 511 oy Г: = Болт заземляющий С №16 м | а 80 150. 651 720 © 228 20тв.@ 372 под кабельный 26 6600 seco css 8600 ария Вывод первичной обмотки 4 отб. 25. 60 — © D 14 4 отб. Ф- -Ф во. — $ |= pny, = --D 218 = 6 ат. © ‚_ В 25. 60 я о о = Отличия в конструкции: НИЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 вре! | ©. раны реишенииы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330 460",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image31.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image32.jpeg::0403f847c419bde482f4917bf603f1dc79cf5cea": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "142 908 24 a ол A} \\Г A2 ASA за т LLL 141 ЕЕ Е 1111 Fup к —— + | ey el ee ——— ‚па ем наши. vos a ини лини. ини ии: ии. р О ПО О Do р ЛО ПО И п И ПО О р Л О ПО пр И ПО И =I 10 В О О 6 11 сте п и я Е 5 | т] Г [1 Болт зазенаяюши M6 я 629 651 720 Отличия в конструкции: [2] РЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 ашешеишыы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "142 908 24 a ол A} \\Г A2 ASA за т LLL 141 ЕЕ Е 1111 Fup к —— + | ey el ee ——— ‚па ем наши. vos a ини лини. ини ии: ии. р О ПО О Do р ЛО ПО И п И ПО О р Л О ПО пр И ПО И =I 10 В О О 6 11 сте п и я Е 5 | т] Г [1 Болт зазенаяюши M6 я 629 651 720 Отличия в конструкции: [2] РЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 ашешеишыы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image32.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image33.jpeg::2e1a9c29b21c7a054af7f7fb2127741e09c76db7": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "1282 1057 Mp EO TF и я р =: dhe | Ly 12] > i = == 5/170) = —4 ЕЕ |= 2 я ва als 88 —— Г (790) 2 = Е а мы i —— = he 7 ЕЁ =~ ——— = 2—2 Ш. ЕЕ и ШТО в ВАА | ГСУ = LJ +4 [eel eso 4 ЖЖ Е a5 Sof fb 32 вы = @228* 372% Foy Bebod первичной adres 50, nae 208 п \\ 8} fi gl с BH еее | | ви oak таз #8 В т вв. ты е Bl бот, 655 Tones iD fa |420 120,",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "1282 1057 Mp EO TF и я р =: dhe | Ly 12] > i = == 5/170) = —4 ЕЕ |= 2 я ва als 88 —— Г (790) 2 = Е а мы i —— = he 7 ЕЁ =~ ——— = 2—2 Ш. ЕЕ и ШТО в ВАА | ГСУ = LJ +4 [eel eso 4 ЖЖ Е a5 Sof fb 32 вы = @228* 372% Foy Bebod первичной adres 50, nae 208 п \\ 8} fi gl с BH еее | | ви oak таз #8 В т вв. ты е Bl бот, 655 Tones iD fa |420 120,",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image33.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image34.png::741c4372fe53cb0a0229ab4846d1f70b1be3385c": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "фо о Du бобы гордой oda Е 4 отб, = Rake iS Я 1 als С Zz x] Z = St @ 6 ano, вв | 1$ дать 660 о им Я sl Е CR = Е = | (| @ |) by) ZIS AX cS —\\ | LI Е дв ф 50 ЕЕ ЕЁ] | м hy B00 baum",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "фо о Du бобы гордой oda Е 4 отб, = Rake iS Я 1 als С Zz x] Z = St @ 6 ano, вв | 1$ дать 660 о им Я sl Е CR = Е = | (| @ |) by) ZIS AX cS —\\ | LI Е дв ф 50 ЕЕ ЕЁ] | м hy B00 baum",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image34.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image35.png::aef607e7ba6e0e8b335e3283c4f37a34b27a4688": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image35.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП 769 001ТУ от января 2026 г.docx::image36.jpeg::99a807f6674b5b94b95d1bdadb445c50cf439c5d": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "т Лист регистрации изменений | Всего Номера листов страниц 1 Входящий № листов № сопроводи- изме- заме- аннули- | (ctpa- тельного Подн. i Дата Изм. HCH- HEHHEIX НОВЫХ рован- НИЦ) в документа документа и НЫХ ных докум. дата Bee |55-6/ 64 er. e204 РИ 06 bby Все 165-76 76 УЕ7М.01-.2024 НУ. 202, BLE им М Fh, ti и 624 Г Ут | А [ Bee 61-48 |60 LveT00.07-2006 |\\uconp\\or 26 —\\ 4 —— | -— 4. ЕН + = | 1 - = ыы",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "т Лист регистрации изменений | Всего Номера листов страниц 1 Входящий № листов № сопроводи- изме- заме- аннули- | (ctpa- тельного Подн. i Дата Изм. HCH- HEHHEIX НОВЫХ рован- НИЦ) в документа документа и НЫХ ных докум. дата Bee |55-6/ 64 er. e204 РИ 06 bby Все 165-76 76 УЕ7М.01-.2024 НУ. 202, BLE им М Fh, ti и 624 Г Ут | А [ Bee 61-48 |60 LveT00.07-2006 |\\uconp\\or 26 —\\ 4 —— | -— 4. ЕН + = | 1 - = ыы",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП 769 001ТУ от января 2026 г.docx",
+    "image": "image36.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image1.wmf::c8b4b22b43c17dc8d7e3ad2ac7acc894cf9b65c6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "лы 230+@ oy 23010,",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "лы 230+@ oy 23010,",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image1.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image2.wmf::e3bcecc3da1ce3f8bca0bf8238de3b358827e812": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ui 100",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ui 100",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image2.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image3.wmf::a7577d2030287c92de47d13414a7ba2944545c82": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ЕЕ ЕЕ еее.",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ЕЕ ЕЕ еее.",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image3.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image4.jpeg::164e593223748cc91d9b73151f13fa8ed88450eb": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "W2 Wi h ke",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "W2 Wi h ke",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image4.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image5.wmf::350ad5e9bef86338bd229026f65bbdba788c9ad1": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "WP, T= a",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "WP, T= a",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image5.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image6.png::67ed5eccfb28012071dc12f7dd40fd039bd74c41": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "702 507 А 2 J | — Ц / м —— [| =— в ЕЕ het а | | ay ai | \\ ет | | >= el < _ — st) > = — so 8 И и ‚ Е 2 ЧЕ ЧИ <> ВЕЕТ ————— >} 10 co} заземляющий КВ ЧИ >И a | с 35 —7 = | 320 302 503 310 6 13 4 ome 280 (nod кабельный 0608} 3 отб. 228 Вывод первичной обмотки 17 4 отв, < [\\ Lt \\=) ) Це Ё во OO OD @ — Ss» ——_",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "702 507 А 2 J | — Ц / м —— [| =— в ЕЕ het а | | ay ai | \\ ет | | >= el < _ — st) > = — so 8 И и ‚ Е 2 ЧЕ ЧИ <> ВЕЕТ ————— >} 10 co} заземляющий КВ ЧИ >И a | с 35 —7 = | 320 302 503 310 6 13 4 ome 280 (nod кабельный 0608} 3 отб. 228 Вывод первичной обмотки 17 4 отв, < [\\ Lt \\=) ) Це Ё во OO OD @ — Ss» ——_",
+    "models": [
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image6.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image7.jpeg::9863ade18f1a3b36bd81985a0d3847c6389a8348": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "702 410 Al awa М 12 Lo ]] 12 рт О ОО п =_= 0 == == =/S Sle a 9 i a a i] 0 a | 320 FF | 503 BI $8 3 016$ 228 А o\\ EF -S о +~=s-_— (под кобольный fbod) Выбой первичной обмотки = п. ay Га» в & B = 9 | р =] НА о \\",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "702 410 Al awa М 12 Lo ]] 12 рт О ОО п =_= 0 == == =/S Sle a 9 i a a i] 0 a | 320 FF | 503 BI $8 3 016$ 228 А o\\ EF -S о +~=s-_— (под кобольный fbod) Выбой первичной обмотки = п. ay Га» в & B = 9 | р =] НА о \\",
+    "models": [
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image7.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image8.png::786d6a5e4443b1e3d9670d2266f11157afab6ea8": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "89 630 во о} В ———|—, an a com ri Aq — nj Ss ЕЕ 12 += === Е | Г Е Пр Hb & 2 - еее - — я и фм Е ту lil И и р aan 24 = a: РЕНИ = — ++ ТТ ss sa А И ИИ hb fit fs olay Болт заземляющий M16 | = 5 556 360 388 538 16 Заглушки 6 оснобаня не показаны са А Выводы первичной обмотки 22 5°6°9 5. ae отб. т < 240 ce Du wa © #8 gs els та. 8 № | Al pe Ce | ta (an) в. ши $228 ont, @ 37,2 (nod кабельный ввод) (под кабельный 0606) © ЭФ Ф Е",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "89 630 во о} В ———|—, an a com ri Aq — nj Ss ЕЕ 12 += === Е | Г Е Пр Hb & 2 - еее - — я и фм Е ту lil И и р aan 24 = a: РЕНИ = — ++ ТТ ss sa А И ИИ hb fit fs olay Болт заземляющий M16 | = 5 556 360 388 538 16 Заглушки 6 оснобаня не показаны са А Выводы первичной обмотки 22 5°6°9 5. ae отб. т < 240 ce Du wa © #8 gs els та. 8 № | Al pe Ce | ta (an) в. ши $228 ont, @ 37,2 (nod кабельный ввод) (под кабельный 0606) © ЭФ Ф Е",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image8.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image9.png::08ca2a1d2ef8bcc7ac7e785b1409bae73b6cc627": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "89 526 во 12 At oe rt 1 jae +Q— + 12 a ЕЕ ot и 1 =o GSS 6 & 2 - LE М | | od Е ЕТ Trt sas 10 О О о fit we oy Болт заземляющий M16 < Е 8 360 Е 388 538 16 Заглушки 0 оснобаним не показаны Выводы первичной обмотки $75 5. 50 22 ond. 1, es als 240 ; Du $8 88 $ в. © $ ge ae «Я 6 ond. 228) ши (под кабельный 6609) (од кабельный 660) ont. $372 20 ЭФ",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "89 526 во 12 At oe rt 1 jae +Q— + 12 a ЕЕ ot и 1 =o GSS 6 & 2 - LE М | | od Е ЕТ Trt sas 10 О О о fit we oy Болт заземляющий M16 < Е 8 360 Е 388 538 16 Заглушки 0 оснобаним не показаны Выводы первичной обмотки $75 5. 50 22 ond. 1, es als 240 ; Du $8 88 $ в. © $ ge ae «Я 6 ond. 228) ши (под кабельный 6609) (од кабельный 660) ont. $372 20 ЭФ",
+    "models": [
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image9.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image10.jpeg::b3f8bf2b4f40725371521186e67dc80a2d6f9ff6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "8 ti => 2 4 А} _— = Aq [ВА ‚|2 ГЫ id ie Ч i Ss =} В) | I ВЕРЯ 2 re |,” ниши, нии. . ии. a ини. ини: ии. ии, 5 т т 1 Sie Ee Ee = 10 пр И ПО О У’ ПО ОО ——— шика 511 oy Г: = Болт заземляющий С №16 м | а 80 150. 651 720 © 228 20тв.@ 372 под кабельный 26 6600 seco css 8600 ария Вывод первичной обмотки 4 отб. 25. 60 — © D 14 4 отб. Ф- -Ф во. — $ |= pny, = --D 218 = 6 ат. © ‚_ В 25. 60 я о о = Отличия в конструкции: НИЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 вре! | ©. раны реишенииы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330 460",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "8 ti => 2 4 А} _— = Aq [ВА ‚|2 ГЫ id ie Ч i Ss =} В) | I ВЕРЯ 2 re |,” ниши, нии. . ии. a ини. ини: ии. ии, 5 т т 1 Sie Ee Ee = 10 пр И ПО О У’ ПО ОО ——— шика 511 oy Г: = Болт заземляющий С №16 м | а 80 150. 651 720 © 228 20тв.@ 372 под кабельный 26 6600 seco css 8600 ария Вывод первичной обмотки 4 отб. 25. 60 — © D 14 4 отб. Ф- -Ф во. — $ |= pny, = --D 218 = 6 ат. © ‚_ В 25. 60 я о о = Отличия в конструкции: НИЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 вре! | ©. раны реишенииы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330 460",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image10.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image11.jpeg::0403f847c419bde482f4917bf603f1dc79cf5cea": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "142 908 24 a ол A} \\Г A2 ASA за т LLL 141 ЕЕ Е 1111 Fup к —— + | ey el ee ——— ‚па ем наши. vos a ини лини. ини ии: ии. р О ПО О Do р ЛО ПО И п И ПО О р Л О ПО пр И ПО И =I 10 В О О 6 11 сте п и я Е 5 | т] Г [1 Болт зазенаяюши M6 я 629 651 720 Отличия в конструкции: [2] РЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 ашешеишыы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "142 908 24 a ол A} \\Г A2 ASA за т LLL 141 ЕЕ Е 1111 Fup к —— + | ey el ee ——— ‚па ем наши. vos a ини лини. ини ии: ии. р О ПО О Do р ЛО ПО И п И ПО О р Л О ПО пр И ПО И =I 10 В О О 6 11 сте п и я Е 5 | т] Г [1 Болт зазенаяюши M6 я 629 651 720 Отличия в конструкции: [2] РЕ Выделены ребра, относящиеся только к ТРГ-УЭТМ-220 ашешеишыы Выделены ребра, относящиеся только к ТРГ-УЭТМ-330",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image11.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image12.png::4483270392a4d9211da68123f6150146982dd5f2": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Место пломдирования НЕЕЕЕЕЕ обО6еК 2. = LEO Lb bpp Г др CQO! cece Oe м 11000000002 PTET TTY TT TTT НН ИИ крышка",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Место пломдирования НЕЕЕЕЕЕ обО6еК 2. = LEO Lb bpp Г др CQO! cece Oe м 11000000002 PTET TTY TT TTT НН ИИ крышка",
+    "models": [
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image12.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image13.png::076ce3c5060ef9b67c85bcc54568053617ecb21c": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "О TFET 157 152 mSN 291 252 25п №7 №2 NS”",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "О TFET 157 152 mSN 291 252 25п №7 №2 NS”",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image13.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image14.png::85a1b12bd024d75a32e72861e07d7df64e0ca384": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "PPP TL PPT W1 M2 Wn 2И1 2И2 РИП NY NU2 МИП",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "PPP TL PPT W1 M2 Wn 2И1 2И2 РИП NY NU2 МИП",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image14.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image15.png::89c3b31d837a055ca7935c927c4b70d5d60551d9": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image15.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image16.jpeg::6a5dcf6dbce8c669b4542be3b22f03f9e73dc01b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ТРАНСФОРМАТОР ТОКА ЭЛЕГАЗОВЫЙ `Условное обозначение ТТ по п. 1.1 ° doll ТРГ-УЭТМ“- id = 330 -[o,25)/ 0,2 |[ropAy[roPRlropalffroprl| — | — | 500 || 1000 | 2000 |/| 5 || yxnt Напряжение промышленной частотьи УРОВЕНЬ ИЗОЛЯЦИИ ОБМОТКИ ВЫСОКОГО НАПРЯЖЕНИЯ 460/1050/-/850 KB полный грозовой ncrrymecl/cpesarmstit грозовой испульс/ коммутационный импульс НОМИНАЛЬНОЕ НАПРЯЖЕНИЕ | 330 кВ НОМИНАЛЬНОЕ ДАВЛЕНИЕ ЗАПОЛНЕНИЯ [_0,7 |МПа © МИНИМАЛЬНОЕ РАБОЧЕЕ ДАВЛЕНИЕ [`0,6_ МПа р ном тм ‚А почности /| Класс Kewow р ном # ном» А точности / Класс Ком р Nag Knace Kewom 06m. № нагрузка, или нагрузка, или ном Hom? точности / или $1 -52 ном\" Кормом 1-53 SonousB-A, ном\" Кпрмом Ss 5 ‘нагрузка, SouousBeA Mion’ Кор Net 5 500-1000-2000/: ] Параметры вторичной обмотки для измерения № 1 `250-500-100055 | 0.2570 0.28/10 | = Параметры вторичной обмотки для измерения № 2 Noo [250-500- 1000/5 0.2710} 5 500-7000-2000/5| 0, ‘10. Ns [500-1000-2000/5. 10РЕ/25 40. Параметры отпайки обмотки для измерения № 1 Nod [500-1000-2000/5 10РВ/25 40. \"Параметры отпайки обмотки для измерения № 2 Nes [00-1000-2000/5 |_10PR/25 40. Параметры вторичных обмоток для защиты № 3, 4, 5, 6 Nog 00-7000-2000/5 10PR/25 40 |— №7 = = \\ = №8 = — | т Примечания: 1. У трансформаторов конструктивного исполнения 1 жирным шрифтом с подчеркиванием т выделяется коэффициент трансформации, установленный на заводе-изготовителе; Керио Указывается при отличии от \"1\". = Номер таблички технических данных $ ГОСТ 7746 № | 36. СДЕЛАНО В РОССИИ 20|16 jr. 930 | кг Macca TT с комплектом обмоток 8BIT.899.051, Год изготовления TT Заводской номер TT",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ТРАНСФОРМАТОР ТОКА ЭЛЕГАЗОВЫЙ `Условное обозначение ТТ по п. 1.1 ° doll ТРГ-УЭТМ“- id = 330 -[o,25)/ 0,2 |[ropAy[roPRlropalffroprl| — | — | 500 || 1000 | 2000 |/| 5 || yxnt Напряжение промышленной частотьи УРОВЕНЬ ИЗОЛЯЦИИ ОБМОТКИ ВЫСОКОГО НАПРЯЖЕНИЯ 460/1050/-/850 KB полный грозовой ncrrymecl/cpesarmstit грозовой испульс/ коммутационный импульс НОМИНАЛЬНОЕ НАПРЯЖЕНИЕ | 330 кВ НОМИНАЛЬНОЕ ДАВЛЕНИЕ ЗАПОЛНЕНИЯ [_0,7 |МПа © МИНИМАЛЬНОЕ РАБОЧЕЕ ДАВЛЕНИЕ [`0,6_ МПа р ном тм ‚А почности /| Класс Kewow р ном # ном» А точности / Класс Ком р Nag Knace Kewom 06m. № нагрузка, или нагрузка, или ном Hom? точности / или $1 -52 ном\" Кормом 1-53 SonousB-A, ном\" Кпрмом Ss 5 ‘нагрузка, SouousBeA Mion’ Кор Net 5 500-1000-2000/: ] Параметры вторичной обмотки для измерения № 1 `250-500-100055 | 0.2570 0.28/10 | = Параметры вторичной обмотки для измерения № 2 Noo [250-500- 1000/5 0.2710} 5 500-7000-2000/5| 0, ‘10. Ns [500-1000-2000/5. 10РЕ/25 40. Параметры отпайки обмотки для измерения № 1 Nod [500-1000-2000/5 10РВ/25 40. \"Параметры отпайки обмотки для измерения № 2 Nes [00-1000-2000/5 |_10PR/25 40. Параметры вторичных обмоток для защиты № 3, 4, 5, 6 Nog 00-7000-2000/5 10PR/25 40 |— №7 = = \\ = №8 = — | т Примечания: 1. У трансформаторов конструктивного исполнения 1 жирным шрифтом с подчеркиванием т выделяется коэффициент трансформации, установленный на заводе-изготовителе; Керио Указывается при отличии от \"1\". = Номер таблички технических данных $ ГОСТ 7746 № | 36. СДЕЛАНО В РОССИИ 20|16 jr. 930 | кг Macca TT с комплектом обмоток 8BIT.899.051, Год изготовления TT Заводской номер TT",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image16.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image17.png::90f4c4d4347792a899598ace1728da28defc78d1": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Ku (eB НА у let iat LL 3 IE ВЯ \\ \\ \\ м a ee етететететт bow H 12 ребро",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Ku (eB НА у let iat LL 3 IE ВЯ \\ \\ \\ м a ee етететететт bow H 12 ребро",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image17.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image18.png::7bce66cec3c5f1c868e86aa583383dafd8cb4059": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ЕЙ | И \\ Ш i",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ЕЙ | И \\ Ш i",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image18.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image19.png::207258f591bc6495dbc746e17038717b8699f379": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "|= ppc LR; № aA. KY, ee я Cen, % uy IM. pA Be [3 i lu “5—8",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "|= ppc LR; № aA. KY, ee я Cen, % uy IM. pA Be [3 i lu “5—8",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image19.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image20.png::ff1fe53e829929ffdb6d356788a975b0bfef2685": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image20.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image21.png::83e2d10292567208a61b64f18b9a08058e8fa12a": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Схема кантования трансформатора тока ТРГ-УЭТМ- 530 из гори: Jr SY 2 Y/ % < ‚о. Y I il | 5",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Схема кантования трансформатора тока ТРГ-УЭТМ- 530 из гори: Jr SY 2 Y/ % < ‚о. Y I il | 5",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image21.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image22.png::4b2f3a83ad0acf6ec3d51ebe6699baddb7416dbc": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "а) 2] ore и, © 5 9 G © О о п об В if / О wy Se С © ge? STG i} CHATb РАНСПОРТНЫ УПОРЫ",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "а) 2] ore и, © 5 9 G © О о п об В if / О wy Se С © ge? STG i} CHATb РАНСПОРТНЫ УПОРЫ",
+    "models": [
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-220"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image22.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image23.png::8023a214742ac7b0deb98385086dfd60bff8db3c": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "6) д) of fa3. 6 АА и | 4 ley é SH ES @ © SS © © © ) WZ С ) aa Отверстие ©2 в) Прокладка паронит Лыска с 2-х сторон Уплотнение | НИ —> =e НИ мым 9 / —",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "6) д) of fa3. 6 АА и | 4 ley é SH ES @ © SS © © © ) WZ С ) aa Отверстие ©2 в) Прокладка паронит Лыска с 2-х сторон Уплотнение | НИ —> =e НИ мым 9 / —",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image23.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image24.jpeg::3a1a68d80f37c384cdfec1036c6da499e98b4379": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "©) оо ТЕ ос 5 OO O Ре",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "©) оо ТЕ ос 5 OO O Ре",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image24.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image25.png::2e8cbc98b05b9e66f8bfaa58f2265d28743cf723": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "O оо О O о оо (6 5) о (© OHO ОО ЭР) о о (о O) (с O O",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "O оо О O о оо (6 5) о (© OHO ОО ЭР) о о (о O) (с O O",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image25.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image26.png::7db68a4e92ce03b5d4197c541297669c88cf1100": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image26.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image27.png::6ce256d438f808d68038485852de72a347ea635b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image27.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image28.png::d81c7cca7550fd78df778ee46b1dd5d361ebbac9": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "О OO 8",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "О OO 8",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image28.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image29.png::c14dcbead107bc1a031ecb16615a5fa09b340a43": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "— 5 оо © © |, ОЮ | }— & 44 J Фо",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "— 5 оо © © |, ОЮ | }— & 44 J Фо",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image29.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image30.png::305c4c86cdf8ab837dc1bd569f38a7fa1d6ffcfb": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Jl Л2 24 20 24 20 25 25 25 25 26 26 26 26 30 ©) 8 30 1 i as e oe OWE © © оо | э—® o@",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Jl Л2 24 20 24 20 25 25 25 25 26 26 26 26 30 ©) 8 30 1 i as e oe OWE © © оо | э—® o@",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image30.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image31.png::d4030d61753754c76aa957626d0470a7a9dbca5b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ло 20 Al | a 9р9@ 14 РЕ te) 22 CO! 24 oh | | 10 25 Se 26 21 12 т ЕР ll 8 [О all>",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ло 20 Al | a 9р9@ 14 РЕ te) 22 CO! 24 oh | | 10 25 Se 26 21 12 т ЕР ll 8 [О all>",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image31.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image32.png::f4f666612b234287e2552e0bf246d28338019185": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "—-— Ш ИИ © © о © о И и С ях у A |“ | ae № 6 /| \\, Vn LY UY a a и ras = va ooh A a",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "—-— Ш ИИ © © о © о И и С ях у A |“ | ae № 6 /| \\, Vn LY UY a a и ras = va ooh A a",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image32.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image33.png::ee5ee582bae31ea04c6cdd1d3491cca4909aab62": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "24 20 25 © (\\ 25 26 ©) SZ 26 50 NS",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "24 20 25 © (\\ 25 26 ©) SZ 26 50 NS",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image33.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image34.png::9f49525235aa15043c9ce93f405178aa7f8aaaa9": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "20 “ © a 21 14 10 26 —=По Cele) 25 О 24 В © © ©) 21 12 J — | О Г HH 3 и № 1 — С 6 uy",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "20 “ © a 21 14 10 26 —=По Cele) 25 О 24 В © © ©) 21 12 J — | О Г HH 3 и № 1 — С 6 uy",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image34.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image35.png::4dfc4a5ae8bf4480638db310bcf7e9640be56e4a": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Крепление ur резервуар: Bo 10 [~ \\ Ai оо Неве al Vy, Z oI © и р о Nb S| т. К",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Крепление ur резервуар: Bo 10 [~ \\ Ai оо Неве al Vy, Z oI © и р о Nb S| т. К",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image35.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image36.png::eab56641e95ea95349366f4b630021191891c4d3": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "24 16 25 26 30 a> у 25 Е И ОИ 2/ 2/ © 29",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "24 16 25 26 30 a> у 25 Е И ОИ 2/ 2/ © 29",
+    "models": [
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image36.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image37.png::9428a2b1d4536e86373d9391b16aa69e9bed5f71": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "20 Spe 14 10 oh ОО 12 aL E+ Г Ja ll 3 = te",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "20 Spe 14 10 oh ОО 12 aL E+ Г Ja ll 3 = te",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image37.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image38.png::23fbc12b73ec1b2b5ab881d86347788310b08c2a": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "40° max [ | i” Г | | AT of. oOo a LJ ILM. $20 И О Е —",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "40° max [ | i” Г | | AT of. oOo a LJ ILM. $20 И О Е —",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image38.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image39.png::058d012351780d7c467ffd5628dea96b7f9d368c": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "А-А _ Стропы Waida M12 'Гадка M12 (Jere i LZ Ибеллер 1 т umes SS by LY — — Центр масс (O° max ___ {import Ц AD ВЕН Ls 4 =—5",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "А-А _ Стропы Waida M12 'Гадка M12 (Jere i LZ Ибеллер 1 т umes SS by LY — — Центр масс (O° max ___ {import Ц AD ВЕН Ls 4 =—5",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image39.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image40.png::5c58251beae034bac2b323c5cd9b829529b22164": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "40 max Necma захвата Г.Г. ЧИ. ILM. |",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "40 max Necma захвата Г.Г. ЧИ. ILM. |",
+    "models": [
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image40.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image41.png::b0e142606f23b19462f81c441d328c5f8ed10b81": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Места захвата VT YO pasa a пи пани дм [ее т = 10 ml Г We! А tra и —— Fi ВЕН 1s sp NEMS /, ee I a",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Места захвата VT YO pasa a пи пани дм [ее т = 10 ml Г We! А tra и —— Fi ВЕН 1s sp NEMS /, ee I a",
+    "models": [
+      "ТРГ-УЭТМ-220"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image41.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image42.png::de3bc6437c4d4939931cbc59ef364cd89e74ff2a": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "дм. === === === === == 2 Е = = ЕЕ",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "дм. === === === === == 2 Е = = ЕЕ",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image42.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image43.png::2a01cf22288acf3a26df575704957ced3ead6255": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Места захвата Г.Г. ЧИ Og.",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Места захвата Г.Г. ЧИ Og.",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image43.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image44.jpeg::69aeadd63f49a9211c048c530283513435854a38": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "125 4 0 556 omy il Hii 44 —— Е т 3/ 5/ А-А ИН J ча й й == Z AL Z",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "125 4 0 556 omy il Hii 44 —— Е т 3/ 5/ А-А ИН J ча й й == Z AL Z",
+    "models": [
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image44.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image45.png::26c421b774bbbedf590a7ddbe5d23600ff2950e0": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "1234 3 5 и. 3 Gig ВЕН ( п ) ПИ YA = 7, 10 Таблица1 5 Шланг Длина м 1034 0 Te? JE n03.7 10",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "1234 3 5 и. 3 Gig ВЕН ( п ) ПИ YA = 7, 10 Таблица1 5 Шланг Длина м 1034 0 Te? JE n03.7 10",
+    "models": [
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image45.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image46.png::b658a1c53265aa4ead967e2efd23fe4fd7e606fd": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "27 ay Di as, Zi IS N | ШРИ LL",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "27 ay Di as, Zi IS N | ШРИ LL",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image46.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image47.png::82b55aba85d25e7b4464ce0689ba7c6466894fd8": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image47.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image48.jpeg::e8386d13b3419710b9880f38bb75bb0208b36917": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "SX 7 35 97 | А 80",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "SX 7 35 97 | А 80",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image48.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image49.png::6228fe2135e441c5d75d4dbcc48fa69411fb66b6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Манометр МПЗ я | в 138",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Манометр МПЗ я | в 138",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image49.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image50.jpeg::2b28b4cddc007b542004ede0dcecede59035a833": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "of aria\" 70 & | ob 138",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "of aria\" 70 & | ob 138",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image50.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image52.jpeg::683ccf4d54acda41a1ce5c2d5d926c36785492c6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ИЛЛ [> LLE ann’ 63 O22",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ИЛЛ [> LLE ann’ 63 O22",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image52.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image54.jpeg::8e81d31015a880b65efef9e18e83660f25e10c86": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ПРИЛОЖЕНИЕ Б (справочное) ПЕРЕЧЕНЬ КОМПЛЕКТА ПРИНАДЛЕЖНОСТЕЙ И ЗАПАСНЫХ ЧАСТЕЙ №1 (ГРУППОВОЙ) Наименование Обозначение Назначение Рисунок 1. Хомут Для крепления шлангов на штуцерах @ 2. Шланг Рукав !!-9-2,00-ХЛ Шланги соединительные для газотехнологических ae ГОСТ 9356-75 работ 6000 Q 3.Bnok дроссель- 6БП.272.104 Для газотехнологических ный (на период работ транспортиро- вания манометр Манометр МПЗ-У МПЗ-У снят) a & | я 138 4. Ниппель 5БП.456.540 Для газотехнологических работ Для присоединения шланга к клапану КОЛОННЫ 97 5. Заглушка 8Б1.323.939 Для защиты шлангов от увлажнения на период транспортирования и хранения 70 6. Колпачок 8Б1.307.711 Для газотехнологических работ Защитная заглушка на ниппель п.4 30",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ПРИЛОЖЕНИЕ Б (справочное) ПЕРЕЧЕНЬ КОМПЛЕКТА ПРИНАДЛЕЖНОСТЕЙ И ЗАПАСНЫХ ЧАСТЕЙ №1 (ГРУППОВОЙ) Наименование Обозначение Назначение Рисунок 1. Хомут Для крепления шлангов на штуцерах @ 2. Шланг Рукав !!-9-2,00-ХЛ Шланги соединительные для газотехнологических ae ГОСТ 9356-75 работ 6000 Q 3.Bnok дроссель- 6БП.272.104 Для газотехнологических ный (на период работ транспортиро- вания манометр Манометр МПЗ-У МПЗ-У снят) a & | я 138 4. Ниппель 5БП.456.540 Для газотехнологических работ Для присоединения шланга к клапану КОЛОННЫ 97 5. Заглушка 8Б1.323.939 Для защиты шлангов от увлажнения на период транспортирования и хранения 70 6. Колпачок 8Б1.307.711 Для газотехнологических работ Защитная заглушка на ниппель п.4 30",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image54.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image55.jpeg::d579a52d699a5bdc75954683f1dd35f9132ceb70": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "|7 Za, = И 777 лир ат И, (iy LAS Левая LLG 63",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "|7 Za, = И 777 лир ат И, (iy LAS Левая LLG 63",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image55.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image51.png::5d48ccddaf061ffea23ba65c199298fd04d76b25": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "120 4",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "120 4",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image51.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image53.png::739e55196e88338e7e9a6d0bd7ed499f37764e0b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "2 NZ az <> © SZ <2 ZS SZ <> yan SZ <2 LS SZ eS: zs 4 </ С YAN SZ <X> ZS SZ <> ZS SZ <2 ZS SZ < IX XXXXX! LXXXX XI ви 6000",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "2 NZ az <> © SZ <2 ZS SZ <> yan SZ <2 LS SZ eS: zs 4 </ С YAN SZ <X> ZS SZ <> ZS SZ <2 ZS SZ < IX XXXXX! LXXXX XI ви 6000",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image53.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image56.png::c12e0da1ff0dd64a99d9dbc7e37a2c05a06a9bff": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "65 G5/8-B ZZ JV OZZLZ TTS a Г“ КИ LL G3/4-B",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "65 G5/8-B ZZ JV OZZLZ TTS a Г“ КИ LL G3/4-B",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image56.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image57.png::52b907e89e61648c8d2ded6e847b24bf999f1657": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "O22",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "O22",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image57.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image58.png::c9421687e2be6b764ecaf77a5dffb3897042be09": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-110",
+      "ТРГ-УЭТМ-330"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image58.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image59.png::6f6e7f466cc25489858399fb9c5ea48b14bfc79c": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "M2 NSn U сети so (U) №1 А [257 q 252 a 251 q 1Sn 152 a 157 1",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "M2 NSn U сети so (U) №1 А [257 q 252 a 251 q 1Sn 152 a 157 1",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image59.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image60.wmf::34dcfc610dee024faa1d0950eeed0bceadd8eb3a": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "1092 моя",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "1092 моя",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image60.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image61.wmf::a8fd8659c1fe11363e6668b6a6be73dc70f2334d": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "«ВР 1500",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "«ВР 1500",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image61.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001 РЭ от января 2026 г.docx::image62.jpg::8e845267a2345089f2e0b74b8d1db9091e131cae": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "151.769.001 РЭ Ляст регистрации изменений Номера листов страниц ЕЕ а р р рае а tah eared el — pt | а\" 5 [| ЕЕ 41 bed |. lar | И |. ИЕ | Г. О ОН ee ПО РИ В И THES, ПН OAL pense | | tf rg i О ОН ПОНИ ООВ НЕ A ПО О О ee ce ol ария: | (as | [ее etl ие ааа ee я | | || | |_| HL | be | | 162 eee i, ВР. Аг Fatal Bl | Boo _ БАРА Е ен |180 | АЕдИЬА С pee P67 BIE reo Bee et ae ie F240 V8 68 18, 66 6X 57-0564 -,23 L [25.23 /3| 73 7-922 24 GP | joe | | 1% А 01 Lb (in #3",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "151.769.001 РЭ Ляст регистрации изменений Номера листов страниц ЕЕ а р р рае а tah eared el — pt | а\" 5 [| ЕЕ 41 bed |. lar | И |. ИЕ | Г. О ОН ee ПО РИ В И THES, ПН OAL pense | | tf rg i О ОН ПОНИ ООВ НЕ A ПО О О ee ce ol ария: | (as | [ее etl ие ааа ee я | | || | |_| HL | be | | 162 eee i, ВР. Аг Fatal Bl | Boo _ БАРА Е ен |180 | АЕдИЬА С pee P67 BIE reo Bee et ae ie F240 V8 68 18, 66 6X 57-0564 -,23 L [25.23 /3| 73 7-922 24 GP | joe | | 1% А 01 Lb (in #3",
+    "models": [
+      "ТРГ-УЭТМ-220",
+      "ТРГ-УЭТМ-330",
+      "ТРГ-УЭТМ-35",
+      "ТРГ-УЭТМ-110"
+    ],
+    "source_file": "1БП.769.001 РЭ от января 2026 г.docx",
+    "image": "image62.jpg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image1.wmf::c8b4b22b43c17dc8d7e3ad2ac7acc894cf9b65c6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "лы 230+@ oy 23010,",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "лы 230+@ oy 23010,",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image1.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image2.wmf::e3bcecc3da1ce3f8bca0bf8238de3b358827e812": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ui 100",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ui 100",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image2.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image3.wmf::a7577d2030287c92de47d13414a7ba2944545c82": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ЕЕ ЕЕ еее.",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ЕЕ ЕЕ еее.",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image3.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image4.jpeg::f3ee2385d78eb2b3dc81436191e21650d3c1fc97": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "We Wi h le",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "We Wi h le",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image4.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image5.wmf::350ad5e9bef86338bd229026f65bbdba788c9ad1": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "WP, T= a",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "WP, T= a",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image5.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image6.png::ff891a1a373d9a5ce20f6a69da000191edc0517b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "1676 1282 1057 гв Е | Wo 2 \"a Py cil И тт tl, a UL le 12 4 7 ‘, а TO 6 (7-10) D 80 4 отб LLM. 2) © © RO | by 81110) 3 g Rh с mi +1 i И | Eth Jil J iL LA Фр OC] ®Г] тт 790 780 850 14 (0820 902..1035 885 М Во. 827 Болт заземляющий M1 4 отб == о [ 1 А ao | Вывод первичной обмотки D 22,8* @ 37.2% 2 отб eal) F i” 17 '| 5 \\ © a) 4 -- ра 4 отб 45 |&- Ha WS а Fj iN ORE: 6 отб @ 26 60 4 0тб 10 88 11 660 120",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "1676 1282 1057 гв Е | Wo 2 \"a Py cil И тт tl, a UL le 12 4 7 ‘, а TO 6 (7-10) D 80 4 отб LLM. 2) © © RO | by 81110) 3 g Rh с mi +1 i И | Eth Jil J iL LA Фр OC] ®Г] тт 790 780 850 14 (0820 902..1035 885 М Во. 827 Болт заземляющий M1 4 отб == о [ 1 А ao | Вывод первичной обмотки D 22,8* @ 37.2% 2 отб eal) F i” 17 '| 5 \\ © a) 4 -- ра 4 отб 45 |&- Ha WS а Fj iN ORE: 6 отб @ 26 60 4 0тб 10 88 11 660 120",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image6.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image7.png::62822457a2b6867967ed62323b156393843f94dd": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "HO Ld",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "HO Ld",
+    "models": [
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image7.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image8.png::549019a10b284b7b7e3cb3033976e3606e6fc6ee": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Joes I }",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Joes I }",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image8.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image9.png::5f349039ba8c89363fb1ebb226ce97b696558329": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "фи Du Bdode пербично обнееки 60. Е Г а Sg р = <. РУ Od Я 3 1 С ^^. ES 7 | вв | 1$ @ L им К <? = Е 9) | d | ZIS r al} Е. LEX ~ feb a nae",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "фи Du Bdode пербично обнееки 60. Е Г а Sg р = <. РУ Od Я 3 1 С ^^. ES 7 | вв | 1$ @ L им К <? = Е 9) | d | ZIS r al} Е. LEX ~ feb a nae",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image9.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image10.png::559197c59a643fccef8142607c0d5f9638257187": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Место пломдирования ЕЕЕЕЕБ seesssscem Lee php Pee iSeeese MAL [2 й HUT Pitt Pitti tidy крышка",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Место пломдирования ЕЕЕЕЕБ seesssscem Lee php Pee iSeeese MAL [2 й HUT Pitt Pitti tidy крышка",
+    "models": [
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image10.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image11.png::076ce3c5060ef9b67c85bcc54568053617ecb21c": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "О TFET 157 152 mSN 291 252 25п №7 №2 NS”",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "О TFET 157 152 mSN 291 252 25п №7 №2 NS”",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image11.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image12.png::01f07a97b2c89915dfbab2033d6b35ff03d53239": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image12.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image13.jpeg::cfdf4f2bd199257e9a0a528df056341304d57c48": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Условное оБознацение ТТ no п ТРАНСФОРМАТОР ТОКА ЭЛЕГАЗОВЫЙ ° Jol ТРГ-УЭТМ*- 500 id = - 0,25// 0,2 |И1ОРВ/1ОРН/1ОРНИ10РЕ| — — || 500 - 1000 | 2000 || 5 УХЛ1 630/1425/1300/1050 | kB УРОВЕНЬ ИЗОЛЯЦИИ ОБМОТКИ ВЫСОКОГО НАПРЯЖЕНИЯ Нопряхение промышленной частоты/ НОМИНАЛЬНОЕ НАПРЯЖЕНИЕ | 500 | KB ПОЛНЫЙ ГРОЗОВОЙ ИМПУЛЬС/СРЕЗОННЫЙ ГРОЗОВОЙ ИМПУЛЬС НОМИНАЛЬНОЕ ДАВЛЕНИЕ ЗАПОЛНЕНИЯ |0,57 |МПа < © КОММУТОЦИОННЫЙ_ИМУЛЬС МИНИМАЛЬНОЕ РАБОЧЕЕ ДАВЛЕНИЕ | 0,48 | МПа р “ном И 2ном» точности / Класс Ком 1 ‘rom | 2ном? И очности / Класс Ком 1 Чном ' \"2ном? И точности / Класс Кеном Обм. № нагрузка, нагрузка, или нагрузка, и $1 -$2 Serio ВА, on $1 -S3 Заномз ВА. ом\" Kap sto $ -5 SoucusB°A Ком” Кар №1 250-500-1000/5 | 0,25/10, 5 д 5 025/10 = Параметры вторичной OBMOTKM для измерения № №2 250-500-1000/5 0,2710 5 500-1000-2000/ 5 Параметры вторичной OBMOTKN для измерения № 0.2/10 — Параметры отпойки ОБМОТКИ для измерения № №3 [500-1000-2000/5' 10PR/25 40 Порометры отпойки OBMOTKH для измерения № №4 500- 1000-2000/5) 10PR/25 40 = = = №5 [500-1000-2000/5' 10PR/25 40 = = = = №6 Ь00-1000-2000/5' 10РВ/25 = Порометры вторичных обмоток для защиты №, 4, 9, 6 №7 = = = = №8 _ _ — Примечания: 1. У трансформаторов конструктивного исполнения 1 жирным шрифтом с подчеркиванием выделяется коэффициент трансформации, установленный на заводе-изготовителе; Масса ТТ с комплектом OBMOTOK 2. Къьном Указывается при отличии от \"1\". Номер тавлички технических данных e ГОСТ 7746 № 36 СДЕЛАНО В РОССИИ 20 г. 930 | кг 8БП.899.051 Год изготовления ТТ Заводской номер ТТ",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Условное оБознацение ТТ no п ТРАНСФОРМАТОР ТОКА ЭЛЕГАЗОВЫЙ ° Jol ТРГ-УЭТМ*- 500 id = - 0,25// 0,2 |И1ОРВ/1ОРН/1ОРНИ10РЕ| — — || 500 - 1000 | 2000 || 5 УХЛ1 630/1425/1300/1050 | kB УРОВЕНЬ ИЗОЛЯЦИИ ОБМОТКИ ВЫСОКОГО НАПРЯЖЕНИЯ Нопряхение промышленной частоты/ НОМИНАЛЬНОЕ НАПРЯЖЕНИЕ | 500 | KB ПОЛНЫЙ ГРОЗОВОЙ ИМПУЛЬС/СРЕЗОННЫЙ ГРОЗОВОЙ ИМПУЛЬС НОМИНАЛЬНОЕ ДАВЛЕНИЕ ЗАПОЛНЕНИЯ |0,57 |МПа < © КОММУТОЦИОННЫЙ_ИМУЛЬС МИНИМАЛЬНОЕ РАБОЧЕЕ ДАВЛЕНИЕ | 0,48 | МПа р “ном И 2ном» точности / Класс Ком 1 ‘rom | 2ном? И очности / Класс Ком 1 Чном ' \"2ном? И точности / Класс Кеном Обм. № нагрузка, нагрузка, или нагрузка, и $1 -$2 Serio ВА, on $1 -S3 Заномз ВА. ом\" Kap sto $ -5 SoucusB°A Ком” Кар №1 250-500-1000/5 | 0,25/10, 5 д 5 025/10 = Параметры вторичной OBMOTKM для измерения № №2 250-500-1000/5 0,2710 5 500-1000-2000/ 5 Параметры вторичной OBMOTKN для измерения № 0.2/10 — Параметры отпойки ОБМОТКИ для измерения № №3 [500-1000-2000/5' 10PR/25 40 Порометры отпойки OBMOTKH для измерения № №4 500- 1000-2000/5) 10PR/25 40 = = = №5 [500-1000-2000/5' 10PR/25 40 = = = = №6 Ь00-1000-2000/5' 10РВ/25 = Порометры вторичных обмоток для защиты №, 4, 9, 6 №7 = = = = №8 _ _ — Примечания: 1. У трансформаторов конструктивного исполнения 1 жирным шрифтом с подчеркиванием выделяется коэффициент трансформации, установленный на заводе-изготовителе; Масса ТТ с комплектом OBMOTOK 2. Къьном Указывается при отличии от \"1\". Номер тавлички технических данных e ГОСТ 7746 № 36 СДЕЛАНО В РОССИИ 20 г. 930 | кг 8БП.899.051 Год изготовления ТТ Заводской номер ТТ",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image13.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image14.png::47315ada77782d29f17b2d277c7d6dc4ca16bede": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ТРАНСФОРМАТОР ТОКА ЭЛЕГАЗОВЫЙ `Условное обозначение TT по п. 1.1 + JIM ТРГ-УЭТМ®- 750 IV 5 Ф Ул - 0,2$ || 0,25 /ЧОРВ/40РВ/40РЕ/10РК/ — || — || 750 |- 1500 |- 3000 |/| 1 Код по системе KKS (Kraftwerk Kennzeichnen System) КОД KKS 02ABQ42GT120A 830/1950/-/1425 KB УРОВЕНЬ ИЗОЛЯЦИИ ОБМОТКИ ВЫСОКОГО НАПРЯЖЕНИЯ Напряжение промышленной частотьи НОМИНАЛЬНОЕ НАПРЯЖЕНИЕ | 750 кВ полный грозовой импульс/орезанный грозовой импульс Икоммутационный импульс НОМИНАЛЬНОЕ ДАВЛЕНИЕ ЗАПОЛНЕНИЯ |_0,5 МПа © МИНИМАЛЬНОЕ РАБОЧЕЕ ДАВЛЕНИЕ [0,42 |МПа I и Ком | п р И точности / Класс Кем № Myon! anon? lrouocru / нагрузка, или low now? Е Keron нагрузка, или Iam! ном нагрузка, или Обм. 81-82 Smo BA Keou*Kapvo $1 -53 оне В-А_Кном\"Корно 3 -5 ЗУБА Км Kapa Net '5-750-1500/1 0.28/15 Е | О-1500-3000] 0255 5 i т Параметры вторичной обмотки для измерения № 1 1 Параметры вторичной обмотки для измерения № 2 Nez г -7Б0-Т50ОМ г 7 \\[750-1500-З000Т 0. = И 5 Параметры отпайки обмотки для измерения № 1 Neo. 750-1500-3000/1 Е] 30 \"Параметры отпайки обмотки для измерения № 2 Nod 750-1500-3000/1 1ОРЕ/50. 30) №5 750-1500-3000/1 TOPRISO 30 №6 0-1500-30009 10РЕ/50. 0 Параметры вторичных обмоток для защиты № 3, 4, 5, 6 ме = Ш = = = = = = S = = = = = = Si №8 Примечания: 1. У трансформаторов конструктивного исполнения 1 жирным шрифтом с подчеркиванием 2. Корном Указывается при отличии от \"1\". выделяется коз д фициент 1 рансформации, установленный на заводе-изготовителе; Macca ТТ с комплектом обмоток. ГОСТ 7746 СДЕЛАНО В РОССИИ 20/24 |r. 3280 | кг & №13 Год изготовления TT СДЕЛАНО ДЛЯ АЭС 7Б1П.890.599 Номер таблички технических данных | Заводской номер TT |",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ТРАНСФОРМАТОР ТОКА ЭЛЕГАЗОВЫЙ `Условное обозначение TT по п. 1.1 + JIM ТРГ-УЭТМ®- 750 IV 5 Ф Ул - 0,2$ || 0,25 /ЧОРВ/40РВ/40РЕ/10РК/ — || — || 750 |- 1500 |- 3000 |/| 1 Код по системе KKS (Kraftwerk Kennzeichnen System) КОД KKS 02ABQ42GT120A 830/1950/-/1425 KB УРОВЕНЬ ИЗОЛЯЦИИ ОБМОТКИ ВЫСОКОГО НАПРЯЖЕНИЯ Напряжение промышленной частотьи НОМИНАЛЬНОЕ НАПРЯЖЕНИЕ | 750 кВ полный грозовой импульс/орезанный грозовой импульс Икоммутационный импульс НОМИНАЛЬНОЕ ДАВЛЕНИЕ ЗАПОЛНЕНИЯ |_0,5 МПа © МИНИМАЛЬНОЕ РАБОЧЕЕ ДАВЛЕНИЕ [0,42 |МПа I и Ком | п р И точности / Класс Кем № Myon! anon? lrouocru / нагрузка, или low now? Е Keron нагрузка, или Iam! ном нагрузка, или Обм. 81-82 Smo BA Keou*Kapvo $1 -53 оне В-А_Кном\"Корно 3 -5 ЗУБА Км Kapa Net '5-750-1500/1 0.28/15 Е | О-1500-3000] 0255 5 i т Параметры вторичной обмотки для измерения № 1 1 Параметры вторичной обмотки для измерения № 2 Nez г -7Б0-Т50ОМ г 7 \\[750-1500-З000Т 0. = И 5 Параметры отпайки обмотки для измерения № 1 Neo. 750-1500-3000/1 Е] 30 \"Параметры отпайки обмотки для измерения № 2 Nod 750-1500-3000/1 1ОРЕ/50. 30) №5 750-1500-3000/1 TOPRISO 30 №6 0-1500-30009 10РЕ/50. 0 Параметры вторичных обмоток для защиты № 3, 4, 5, 6 ме = Ш = = = = = = S = = = = = = Si №8 Примечания: 1. У трансформаторов конструктивного исполнения 1 жирным шрифтом с подчеркиванием 2. Корном Указывается при отличии от \"1\". выделяется коз д фициент 1 рансформации, установленный на заводе-изготовителе; Macca ТТ с комплектом обмоток. ГОСТ 7746 СДЕЛАНО В РОССИИ 20/24 |r. 3280 | кг & №13 Год изготовления TT СДЕЛАНО ДЛЯ АЭС 7Б1П.890.599 Номер таблички технических данных | Заводской номер TT |",
+    "models": [
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image14.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image15.png::8aa112fdb4dfccc1de7e8bb821f8e1b856732af1": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "La as Z | | | = ООО ПИ А ОНИ a ЕН | | | — | =",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "La as Z | | | = ООО ПИ А ОНИ a ЕН | | | — | =",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image15.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image16.png::922557038aa164cacd4ddd56193264226ff6c294": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "4 места. Vaan я ‘> » NA (a = > #5 55 fe Is. ыы BS sx / 5: = и «Г 1238 SSS SS S mA Sss SS SSs SS [55 SS SSs SS SSF/ 555 SS SS SS7 SS 5 Ss SS SS S SSs SS SS + SSs SS SS Ss SS SS 5 = Ss Ss = Wa Г ay! mT |",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "4 места. Vaan я ‘> » NA (a = > #5 55 fe Is. ыы BS sx / 5: = и «Г 1238 SSS SS S mA Sss SS SSs SS [55 SS SSs SS SSF/ 555 SS SS SS7 SS 5 Ss SS SS S SSs SS SS + SSs SS SS Ss SS SS 5 = Ss Ss = Wa Г ay! mT |",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image16.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image17.png::f90628f8aefb5b0412b7c87b2115d8d7fa9e672b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "KN `` sa ЕЕ |",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "KN `` sa ЕЕ |",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image17.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image18.png::f05f677a572c799b170a0cad384dda9cfad21d00": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "a + —— у } 1 не",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "a + —— у } 1 не",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image18.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image19.png::fa3acf8b32631564279005eed6ac4978c648eb26": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ПЕ ft zs Е НН а",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ПЕ ft zs Е НН а",
+    "models": [
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image19.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image20.png::64b777cca65c7c4b4f8485b2fd01ed83d69af059": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "d \"Я ттт",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "d \"Я ттт",
+    "models": [
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image20.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image21.png::2433d688abcc92bd214ac5458c918a3042704065": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Z Zs Be KE NS NS S Vo Vee We LL Le А Ui й 722",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Z Zs Be KE NS NS S Vo Vee We LL Le А Ui й 722",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image21.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image22.png::dc9ae613ca5f57fc297389ee33288a892d85ea67": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Е и aor № = a —",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Е и aor № = a —",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image22.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image25.png::c7c03b3ec3e744a8d2ce81f0c31ea40107746354": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "17 тах |--\\ fF 2} Е CH oe) а ma и Г) А А i + ик Е [= а ии = Нет Опт Е - —— _—_ ra a I И feeb Ll Oot rt",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "17 тах |--\\ fF 2} Е CH oe) а ma и Г) А А i + ик Е [= а ии = Нет Опт Е - —— _—_ ra a I И feeb Ll Oot rt",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image25.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image23.png::e5da752346abb8dbd441831b63b2ee2b0482d5b3": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "4 места ! a — 5 й Крик строп",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "4 места ! a — 5 й Крик строп",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image23.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image24.png::6a2217ac10d582236a0484eeecabe2d24597b785": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image24.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image26.png::5d548ee95f69050c9a329855688db0fcf9b7b482": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "я И I, А Si | д А ея [ ЩЕ Отв. для строп eT Lge vies М| =.= T T Б +1 === Крюк стропы ыы О ee |",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "я И I, А Si | д А ея [ ЩЕ Отв. для строп eT Lge vies М| =.= T T Б +1 === Крюк стропы ыы О ee |",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image26.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image27.jpeg::e3594f0e6104c7eedfebdf187d06b464354a02a6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "125 4 0 5 5 6 omy ii Hii 44 = Е т 3/ 5/ А-А ИН я ча й й == Z AL y",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "125 4 0 5 5 6 omy ii Hii 44 = Е т 3/ 5/ А-А ИН я ча й й == Z AL y",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image27.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image28.png::07fc738a34fc38a05670033492ad11e25bf94ee9": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "1234 3 ee! emma! вЫ oN tA | Вход 8 <, 10 Таблица A2 Шланг. Длина, м. п034 30 Фр п0з.7 10",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "1234 3 ee! emma! вЫ oN tA | Вход 8 <, 10 Таблица A2 Шланг. Длина, м. п034 30 Фр п0з.7 10",
+    "models": [
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image28.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image30.png::a71f80681584bbfb8f960437fb61b7e14296c4f6": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "QO oo oO оо OO 2 Oo 0/0 0 fo ejoe Oo Oyo Oo eS 29)",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "QO oo oO оо OO 2 Oo 0/0 0 fo ejoe Oo Oyo Oo eS 29)",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image30.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image29.png::ef706cb15c4641b889749c7d748064ffa5c713da": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ооо ale С coe lo 9)",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ооо ale С coe lo 9)",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image29.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image31.png::9854cde1ac561589e2b3c968b8a64291d06bfc7f": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Крепление шины к резервуару 1 9 10 One) |4 се © | © © ув 10",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Крепление шины к резервуару 1 9 10 One) |4 се © | © © ув 10",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image31.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image32.png::016f54eadb89d0aae061c7dc01b959e64b1d9c47": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "©_® OHO ©)",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "©_® OHO ©)",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image32.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image33.png::4f80e04d4160c05fb2de3ee1d1d3ff10625f1fbd": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Aq A2 | ©--- © г 4 ? ©_® | > © ©-©) Oe Oe © © о`®В7о 8",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Aq A2 | ©--- © г 4 ? ©_® | > © ©-©) Oe Oe © © о`®В7о 8",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image33.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image34.png::b658a1c53265aa4ead967e2efd23fe4fd7e606fd": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "27 ay Di as, Zi IS N | ШРИ LL",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "27 ay Di as, Zi IS N | ШРИ LL",
+    "models": [
+      "ТРГ-УЭТМ-500",
+      "ТРГ-УЭТМ-750"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image34.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image35.jpeg::a04a2299c88cee28c127909e6d537bc91dce713f": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "—7 | 35 аз! |} 97 80",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "—7 | 35 аз! |} 97 80",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image35.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image36.png::238260c6517389ca57fd3f5d94de49ce9fdfd790": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Манометр МПЗ ия НН BAe | «дор 138",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Манометр МПЗ ия НН BAe | «дор 138",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image36.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image37.jpeg::413cd451363c0a83fb392e3afde820573f851225": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "of мп’ 70 & | a 138",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "of мп’ 70 & | a 138",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image37.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image39.jpeg::df4b845bcd6610c4f52d894455d9e052c525fe4d": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "МП2 63 G22 ти =",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "МП2 63 G22 ти =",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image39.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image41.jpeg::712606f50301b70cb4421b4e89fce77806092cda": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "ПРИЛОЖЕНИЕ Б (справочное) ПЕРЕЧЕНЬ КОМПЛЕКТА ПРИНАДЛЕЖНОСТЕЙ И ЗАПАСНЫХ ЧАСТЕЙ №1 (ГРУППОВОЙ) Наименование Обозначение Назначение Рисунок 1. Хомут Для крепления шлангов на штуцерах Ф 2. Шланг Рукав 11-9-2,00-ХЛ Шланги соединительные ГОСТ 9356-75 для газотехнологических Ct работ 6000 Q 3.Bnok дроссель- 6БП.272.104 Для газотехнологических ный (на период работ транспортиро- вания манометр Манометр МПЗ-У МПЗ-У снят) a & | Bo 138 4. Ниппель 5БП.456.540 Для газотехнологических работ Для присоединения шланга к клапану КОЛОННЫ 97 5. Заглушка 8БП.323.939 Для защиты шлангов от увлажнения на период транспортирования и хранения 70 6. Колпачок 8Б1.307.711 Для газотехнологических работ Защитная заглушка на ниппель п.4 30",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "ПРИЛОЖЕНИЕ Б (справочное) ПЕРЕЧЕНЬ КОМПЛЕКТА ПРИНАДЛЕЖНОСТЕЙ И ЗАПАСНЫХ ЧАСТЕЙ №1 (ГРУППОВОЙ) Наименование Обозначение Назначение Рисунок 1. Хомут Для крепления шлангов на штуцерах Ф 2. Шланг Рукав 11-9-2,00-ХЛ Шланги соединительные ГОСТ 9356-75 для газотехнологических Ct работ 6000 Q 3.Bnok дроссель- 6БП.272.104 Для газотехнологических ный (на период работ транспортиро- вания манометр Манометр МПЗ-У МПЗ-У снят) a & | Bo 138 4. Ниппель 5БП.456.540 Для газотехнологических работ Для присоединения шланга к клапану КОЛОННЫ 97 5. Заглушка 8БП.323.939 Для защиты шлангов от увлажнения на период транспортирования и хранения 70 6. Колпачок 8Б1.307.711 Для газотехнологических работ Защитная заглушка на ниппель п.4 30",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image41.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image38.png::5d48ccddaf061ffea23ba65c199298fd04d76b25": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "120 4",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "120 4",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image38.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image40.png::739e55196e88338e7e9a6d0bd7ed499f37764e0b": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "2 NZ az <> © SZ <2 ZS SZ <> yan SZ <2 LS SZ eS: zs 4 </ С YAN SZ <X> ZS SZ <> ZS SZ <2 ZS SZ < IX XXXXX! LXXXX XI ви 6000",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "2 NZ az <> © SZ <2 ZS SZ <> yan SZ <2 LS SZ eS: zs 4 </ С YAN SZ <X> ZS SZ <> ZS SZ <2 ZS SZ < IX XXXXX! LXXXX XI ви 6000",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image40.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image42.jpeg::7be42722d4a688c6004c679fceb1fafcea58c4dd": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "р Е = Левая резьб: 63",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "р Е = Левая резьб: 63",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image42.jpeg"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image43.png::c12e0da1ff0dd64a99d9dbc7e37a2c05a06a9bff": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "65 G5/8-B ZZ JV OZZLZ TTS a Г“ КИ LL G3/4-B",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "65 G5/8-B ZZ JV OZZLZ TTS a Г“ КИ LL G3/4-B",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image43.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image44.png::52b907e89e61648c8d2ded6e847b24bf999f1657": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "O22",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "O22",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image44.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image45.png::6f6e7f466cc25489858399fb9c5ea48b14bfc79c": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "M2 NSn U сети so (U) №1 А [257 q 252 a 251 q 1Sn 152 a 157 1",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "M2 NSn U сети so (U) №1 А [257 q 252 a 251 q 1Sn 152 a 157 1",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image45.png"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image46.wmf::34dcfc610dee024faa1d0950eeed0bceadd8eb3a": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "1092 моя",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "1092 моя",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image46.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image47.wmf::a8fd8659c1fe11363e6668b6a6be73dc70f2334d": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "«ВР 1500",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "«ВР 1500",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image47.wmf"
+  },
+  "C:\\Users\\Magomedov_NM\\Downloads\\AI_API_to_fill_tender_PDF_support\\data_tenders\\1БП.769.001-01 РЭ от января 2026 г.docx::image48.jpg::6b9f00365f6c621a852b224bcd348be14e00cf84": {
+    "vision": {
+      "model_mentions": [],
+      "parameters": [],
+      "raw_text": "Has регистрации изменений Входящий ри листов ae capac листов Всего № сопрово- изменен- | заменен- Новых аннули- рован- (страниц) документа дительного Поди. | Дата | ных HEX. в докум документа и дата Z| [Bee — SE рр oom eee LE 27 БРА MIL 08.4 Ble 62,64 | 63 ENl-L06 1-25 pt И РРР Е ОИ О О О О ПО ПО ПО pt | ft О О ОО ПО ПО О О О ПО ПО ОО ПО О О О О ПО ПО ООО ПОНИ О О ПО ee ee О О ee ПО ПО О ПО ПО ПО ee О О О ПО ПО ПО ПОНИ О О ПО ПОНИ О О ОНИ a О О О О ee О ИИ 578",
+      "notes": [
+        "vision_failed: Expecting value: line 1 column 1 (char 0)"
+      ]
+    },
+    "text": "Has регистрации изменений Входящий ри листов ae capac листов Всего № сопрово- изменен- | заменен- Новых аннули- рован- (страниц) документа дительного Поди. | Дата | ных HEX. в докум документа и дата Z| [Bee — SE рр oom eee LE 27 БРА MIL 08.4 Ble 62,64 | 63 ENl-L06 1-25 pt И РРР Е ОИ О О О О ПО ПО ПО pt | ft О О ОО ПО ПО О О О ПО ПО ОО ПО О О О О ПО ПО ООО ПОНИ О О ПО ee ee О О ee ПО ПО О ПО ПО ПО ee О О О ПО ПО ПО ПОНИ О О ПО ПОНИ О О ОНИ a О О О О ee О ИИ 578",
+    "models": [
+      "ТРГ-УЭТМ-750",
+      "ТРГ-УЭТМ-500"
+    ],
+    "source_file": "1БП.769.001-01 РЭ от января 2026 г.docx",
+    "image": "image48.jpg"
+  }
+}

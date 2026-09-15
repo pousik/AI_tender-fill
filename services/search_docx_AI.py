@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import uuid
 from copy import deepcopy
@@ -41,6 +42,7 @@ from services.gigachat_client import (
 )
 from services.knowledge_base import build_knowledge_context, canonicalize_field, norm, resolve_db_field
 from services.template_knowledge import find_best_template, apply_template, apply_voltage_profile, save_document_to_knowledge
+from services.data_tenders_knowledge import get_data_tenders_knowledge, _param_key
 
 __all__ = ["process_docx_requirements", "check_gigachat_connection"]
 
@@ -421,10 +423,16 @@ def _determine_type(session: Session, items: list[dict], document_context: dict[
     return best[0][1], voltage
 
 
-def _algorithm_fill(session: Session, items: list[dict], tr_type: TrType, voltage: str | None) -> list[dict]:
+def _algorithm_fill(session: Session, items: list[dict], tr_type: TrType, voltage: str | None, data_kb=None, document_text: str = "") -> list[dict]:
     result = []
+    # Модель и напряжение определяем один раз на весь документ. Ранее
+    # detect_model() повторно проходил весь контекст для каждой строки.
+    data_model = data_kb.detect_model(document_text, items) if data_kb is not None else None
+    effective_model = data_model or (tr_type.name if tr_type and "ТРГ-УЭТМ" in str(tr_type.name).upper() else None)
+    effective_voltage = voltage or (data_kb.detect_voltage(document_text, items) if data_kb is not None else None)
     for item in items:
-        db_key = canonicalize_field(session, item["param_name"])
+        # При активном data_tenders не делаем SQL/fuzzy-поиск FieldRule на каждой строке.
+        db_key = _param_key(item["param_name"]) if data_kb is not None else canonicalize_field(session, item["param_name"])
         param_text = norm(item.get("param_name", ""))
         item["db_key"] = db_key
         value, source = (None, None)
@@ -441,17 +449,38 @@ def _algorithm_fill(session: Session, items: list[dict], tr_type: TrType, voltag
             or "заводской тип марка" in param_text
             or ("тип" in param_text and "марка" in param_text)
         )
-        if is_manufacturer or db_key == "manufacturer":
-            value, source = resolve_db_field(session, "manufacturer", item["required_val"], None, None)
-            db_key = "manufacturer"
-        elif is_brand or db_key == "brand":
-            value, source = resolve_db_field(session, "brand", item["required_val"], tr_type.id, voltage)
-            db_key = "brand"
-        elif db_key:
-            value, source = resolve_db_field(session, db_key, item["required_val"], tr_type.id, voltage)
+        # Константы берем только из data_tenders. SQLite БД в этом проходе
+        # намеренно не используется. Составные значения передаются AI как
+        # candidate для второго уровня и не фиксируются вслепую.
+        if data_kb is not None:
+            value, source, _score = data_kb.get_constant(
+                item["param_name"],
+                text_context=document_text,
+                model=effective_model,
+                voltage=effective_voltage,
+                required_val=item.get("required_val", ""),
+            )
+        else:
+            value, source = None, None
 
-        item["algorithm_value"] = value if value is not None else ""
-        item["algorithm_source"] = source or "NONE"
+        candidate = str(value or "").strip()
+        required = str(item.get("required_val", "") or "").strip()
+        param_lower = param_text
+        ambiguous = bool(
+            candidate and required == "*" and
+            (
+                "габарит" in param_lower
+                or "масса трансформатора" in param_lower
+                or "масса масла" in param_lower
+                or "климатическ" in param_lower
+                or len(re.findall(r"\d+(?:[.,]\d+)?", candidate)) > 1
+                or re.search(r"(?:\bили\b|/|;|,)", candidate, flags=re.IGNORECASE)
+            )
+        )
+        item["algorithm_candidate"] = candidate
+        item["algorithm_candidate_source"] = source or "NONE"
+        item["algorithm_value"] = "" if ambiguous else candidate
+        item["algorithm_source"] = "NONE" if ambiguous else (source or "NONE")
         result.append(item.copy())
     return result
 
@@ -1178,6 +1207,8 @@ def _build_ai_prompt(
             "db_key": item.get("db_key", ""),
             "algorithm_value": item.get("algorithm_value", ""),
             "algorithm_source": item.get("algorithm_source", ""),
+            "algorithm_candidate": item.get("algorithm_candidate", ""),
+            "algorithm_candidate_source": item.get("algorithm_candidate_source", ""),
         })
 
     # =========================================================
@@ -1208,10 +1239,10 @@ def _build_ai_prompt(
         })
 
     # =========================================================
-    # 4. БАЗА ЗНАНИЙ
+    # 4. ПОЛНЫЙ КОРПУС data_tenders
     # =========================================================
 
-    compact_kb = kb_context.get("entries", [])[:30]
+    data_tenders_context = kb_context
 
     # =========================================================
     # 5. Результат алгоритмического прохода
@@ -1234,6 +1265,8 @@ def _build_ai_prompt(
     # =========================================================
     # 7. PROMPT
     # =========================================================
+
+    data_tenders_json = json.dumps(data_tenders_context, ensure_ascii=False, indent=2)
 
     return f"""
 Ты инженер по высоковольтному электрооборудованию.
@@ -1388,14 +1421,15 @@ def _build_ai_prompt(
 )}
 
 =========================================================
-БАЗА ЗНАНИЙ
+ПОЛНЫЙ КОРПУС data_tenders
 =========================================================
 
-{json.dumps(
-    compact_kb,
-    ensure_ascii=False,
-    indent=2
-)}
+Это основной технический эталон для констант и связанных
+характеристик. В контексте присутствуют ВСЕ найденные DOCX
+из data_tenders, все их таблицы без дублирования merged-ячеек
+и OCR-текст встроенных изображений/чертежей.
+
+{data_tenders_json}
 
 =========================================================
 ПОЛЯ, КОТОРЫЕ НУЖНО ЗАПОЛНИТЬ
@@ -1418,7 +1452,7 @@ def _build_ai_prompt(
 {{
   "item_10": {{
     "value": "Фарфор",
-    "source": "SELF_CONTEXT|AI_CONTEXT|DB|NONE",
+    "source": "DATA_TENDERS|SELF_CONTEXT|AI_CONTEXT|NONE",
     "confidence": 0.98,
     "evidence": ["item_5"],
     "reason": "Значение найдено в строке item_5 текущего документа."
@@ -1450,7 +1484,7 @@ def _ai_review(
     self_profile: dict[str, Any],
     kb_context: dict,
     document_context: dict[str, Any] | None = None,
-    chunk_size: int = 12,
+    chunk_size: int | None = None,
 ) -> dict[str, dict]:
 
     document_context = document_context or {}
@@ -1469,6 +1503,32 @@ def _ai_review(
         return {}
 
     merged: dict[str, dict] = {}
+
+    # Обычно один запрос закрывает весь остаток. Если prompt слишком большой,
+    # делаем небольшое число крупных чанков вместо старых порций по 12 строк.
+    if chunk_size is None:
+        try:
+            chunk_size = max(20, int(os.getenv("TENDER_AI_CHUNK_SIZE", "32")))
+        except ValueError:
+            chunk_size = 32
+    try:
+        max_prompt_chars = int(os.getenv("TENDER_AI_MAX_PROMPT_CHARS", "240000"))
+    except ValueError:
+        max_prompt_chars = 240000
+
+    # Если весь запрос помещается в лимит, отправляем его ровно один раз.
+    try:
+        whole_prompt = _build_ai_prompt(pending, items, self_profile, kb_context, document_context)
+        if len(whole_prompt) <= max_prompt_chars:
+            try:
+                part = ask_json(client, whole_prompt)
+                if isinstance(part, dict):
+                    valid_ids = {x["id"] for x in pending}
+                    return {k: v for k, v in part.items() if k in valid_ids and isinstance(v, dict)}
+            except Exception as exc:
+                print(f"[GigaChat] единый запрос не прошёл, переходим на чанки: {exc}")
+    except Exception as exc:
+        print(f"[GigaChat] не удалось собрать единый prompt: {exc}")
 
     for start in range(0, len(pending), chunk_size):
 
@@ -1787,41 +1847,59 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
     tr_type, voltage = _determine_type(session, items, extra["document"])
 
     # ---------------------------------------------------------
-    # 1. Полевая БЗ: KnowledgeEntry/TrTypeRule.
+    # 1. Сначала ищем готовый шаблон. Если он найден, он является
+    #    единственным источником заполнения: пустые строки НЕ заполняются.
     # ---------------------------------------------------------
-    algorithm_items = _algorithm_fill(session, items, tr_type, voltage)
+    data_kb = get_data_tenders_knowledge()
+    document_text = " ".join(extra["document"].get("paragraphs", [])) + " " + " ".join(
+        c for table in extra["document"].get("tables", []) for row in table for c in row.get("cells", [])
+    )
 
-    # ---------------------------------------------------------
-    # 2. Шаблонная БЗ: ранее сохраненные тендеры.
-    #    Если строка найдена в похожем шаблоне, это доверенный
-    #    детерминированный источник и AI для нее не нужен.
-    # ---------------------------------------------------------
+    # Сначала создаём минимальные элементы без алгоритмического заполнения.
+    template_items = [dict(item) for item in items]
+    for item in template_items:
+        item.setdefault("algorithm_value", "")
+        item.setdefault("algorithm_source", "")
+
     template, template_score, template_matches = find_best_template(
         session,
-        algorithm_items,
+        template_items,
         tr_type_id=tr_type.id,
         voltage=voltage,
     )
     template_filled = 0
+    profile_filled = 0
+
     if template is not None:
         template_filled = apply_template(
             session,
-            algorithm_items,
+            template_items,
             template,
             template_matches,
         )
+        algorithm_items = template_items
         print(
             f"[KB TEMPLATE] найден шаблон id={template.id}, "
-            f"coverage={template_score:.2f}, заполнено={template_filled}"
+            f"coverage={template_score:.2f}, заполнено={template_filled}; "
+            "режим TEMPLATE_ONLY: остальные пустые поля НЕ заполняются"
         )
+        # Жёстко очищаем алгоритмические подсказки у строк, которые шаблон не заполнил.
+        # Иначе последующий merge мог бы принять старое/служебное значение за источник заполнения.
+        for _item in algorithm_items:
+            if not _item.get("template_value"):
+                _item["algorithm_value"] = ""
+                _item["algorithm_source"] = ""
     else:
-        print("[KB TEMPLATE] подходящий шаблон не найден")
+        # Шаблон не найден — запускаем обычный первичный конвейер.
+        algorithm_items = _algorithm_fill(
+            session, items, tr_type, voltage,
+            data_kb=data_kb, document_text=document_text
+        )
 
-    # Старый профиль по напряжению — второй детерминированный слой БЗ.
-    # Он работает только для строк, которые не закрыл шаблон/KnowledgeEntry.
-    profile_filled = apply_voltage_profile(session, algorithm_items, voltage)
-    if profile_filled:
-        print(f"[KB PROFILE] заполнено из профиля {voltage} кВ: {profile_filled}")
+        profile_filled = apply_voltage_profile(session, algorithm_items, voltage)
+        if profile_filled:
+            print(f"[KB PROFILE] заполнено из профиля {voltage} кВ: {profile_filled}")
+        print("[KB TEMPLATE] подходящий шаблон не найден")
 
     # Полный снимок документа после первого (детерминированного) прохода.
     filled_context = [
@@ -1841,12 +1919,16 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
             )
             continue
         item["target_cell"] = target_cell
-        if item["algorithm_value"]:
+        if item.get("algorithm_value"):
             _set_cell_text(target_cell, str(item["algorithm_value"]), "")
 
-    kb_context = build_knowledge_context(session, tr_type.id, voltage)
+    kb_context = data_kb.build_full_context(model=data_kb.detect_model(document_text) or None, voltage=voltage, include_images=True)
     self_profile = _build_self_context(algorithm_items, extra["document"])
-    ai_targets, self_filled = _prepare_ai_targets(algorithm_items, self_profile)
+    if template is not None:
+        ai_targets, self_filled = [], []
+        # В TEMPLATE_ONLY нельзя передавать незаполненные строки дальше в AI.
+    else:
+        ai_targets, self_filled = _prepare_ai_targets(algorithm_items, self_profile)
     doc_context = {
         **extra["document"],
         "algorithm_pass": filled_context,
@@ -1904,7 +1986,7 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
 
         # Если AI промолчал, используем явное требование из соседней колонки.
         # Для значений, выведенных не из БД, ставится ** (или * при уже отмеченном *).
-        if not value:
+        if not value and template is None:
             requirement_value = _fallback_from_requirement(item.get("required_val", ""))
             if requirement_value:
                 value = requirement_value
@@ -1927,7 +2009,7 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
                 "num": item["num"],
                 "param_name": item["param_name"],
                 "required_val": item["required_val"],
-                "algorithm_value": item["algorithm_value"],
+                "algorithm_value": item.get("algorithm_value", ""),
                 "algorithm_source": item["algorithm_source"],
                 "ai_value": _clean_ai_value(aid.get("value", "")),
                 "ai_source": str(aid.get("source", "") or ""),
@@ -1966,7 +2048,8 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
                 "self_context_filled_rows": len(self_filled),
                 "ai_candidate_rows": len(ai_targets),
                 "rules": {
-                    "DB_is_constant_source": True,
+                    "DATA_TENDERS_is_constant_source": True,
+                    "DB_is_constant_source": False,
                     "AI_context_mark": "**",
                     "unknown_placeholders": "never",
                     "star_in_required_value_uses_single_ai_mark": True,

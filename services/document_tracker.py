@@ -47,8 +47,10 @@ class DocumentTracker(QObject):
         print(message)
         self.status.emit(message)
 
-    def watch(self, path: str | Path):
+    def watch(self, path: str | Path, pdf_target: str | Path | None = None):
+        """Начать отслеживание документа. Для DOCX-компаньона PDF можно указать pdf_target."""
         path = str(Path(path).resolve())
+        pdf_target = str(Path(pdf_target).resolve()) if pdf_target else None
 
         if not os.path.exists(path):
             self._log(f"[KB] Файл не найден: {path}")
@@ -56,6 +58,8 @@ class DocumentTracker(QObject):
 
         # Уже отслеживается
         if path in self._files:
+            if pdf_target:
+                self._files[path]["pdf_target"] = pdf_target
             self._log(f"[KB] Уже отслеживается: {Path(path).name}")
             return
 
@@ -70,6 +74,7 @@ class DocumentTracker(QObject):
             "last_event": time.monotonic(),
             "processing": False,
             "learned": False,
+            "pdf_target": pdf_target,
         }
 
         if path not in self.watcher.files():
@@ -248,55 +253,48 @@ class DocumentTracker(QObject):
 
     def _learn_document(self, path: str, info: dict):
         info["processing"] = True
-
         filename = Path(path).name
 
-        self._log(
-            f"[KB] Word закрыт, документ готов к обучению: {filename}"
-        )
+        self._log(f"[KB] Word закрыт, документ готов к обучению: {filename}")
 
         try:
             from services.template_knowledge import capture_docx_file
+            from services.pdf_word_edit import docx_to_pdf
 
             session = self.session_factory()
-
             try:
-                result = capture_docx_file(
-                    session,
-                    path,
-                )
+                # Сначала готовим все результаты. Если PDF-компаньон не может
+                # быть пересохранён, транзакция БЗ не фиксируется и документ
+                # остаётся отслеживаемым для повторной попытки.
+                result = capture_docx_file(session, path)
+
+                pdf_target = info.get("pdf_target")
+                if pdf_target:
+                    docx_to_pdf(path, pdf_target)
+                    self._log(
+                        f"[PDF/WORD] Изменения сохранены обратно в PDF: {Path(pdf_target).name}"
+                    )
 
                 session.commit()
-
-                # Передаём результат в interface.py
                 self.learned.emit(result)
-
                 info["learned"] = True
                 info["dirty"] = False
-
-                self._log(
-                    f"[KB] Обучение завершено один раз: {result}"
-                )
+                self._log(f"[KB] Обучение завершено один раз: {result}")
 
             except Exception:
                 session.rollback()
                 raise
-
             finally:
                 session.close()
 
         except Exception as exc:
-            self._log(
-                f"[KB] Ошибка обучения {filename}: {exc}"
-            )
+            self._log(f"[KB] Ошибка обучения {filename}: {exc}")
             info["processing"] = False
             return
 
         info["processing"] = False
-
-        # После успешного обучения полностью прекращаем
-        # отслеживание этого документа.
         self._stop_tracking(path)
+
     # ============================================================
     # STOP TRACKING
     # ============================================================

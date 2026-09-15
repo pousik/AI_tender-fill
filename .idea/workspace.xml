@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="986f730e-710e-4d95-a86c-1bd652cdae22" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/test_image.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AI_API_to_fill_tender_PDF_support.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AI_API_to_fill_tender_PDF_support.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/1БП 769 001ТУ от января 2026 г.docx" beforeDir="false" afterPath="$PROJECT_DIR$/data_tenders/1БП 769 001ТУ от января 2026 г.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1БП.769.001 РЭ от января 2026 г.docx" beforeDir="false" afterPath="$PROJECT_DIR$/data_tenders/1БП.769.001 РЭ от января 2026 г.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1БП.769.001-01 РЭ от января 2026 г.docx" beforeDir="false" afterPath="$PROJECT_DIR$/data_tenders/1БП.769.001-01 РЭ от января 2026 г.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6da5de63-95fe-4730-9fc1-16683ad9b29c Технические требования ПС Нижний Куранах.docx" beforeDir="false" afterPath="$PROJECT_DIR$/6da5de63-95fe-4730-9fc1-16683ad9b29c Технические требования ПС Нижний Куранах.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_READY.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_READY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/document_tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/document_tracker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/gigachat_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/gigachat_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/normative_docs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/pdf_ai_extractor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/pdf_document_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/search_docx.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/search_docx_AI.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/search_docx_AI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/search_pdf_AI.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/search_pdf_AI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/template_knowledge.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/template_knowledge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tender.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/reset_legacy_templates.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transformers.db" beforeDir="false" afterPath="$PROJECT_DIR$/transformers.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transformers_legacy.db" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="3Iz0Iux8q31syuPiIwvP0VOZfJ8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.gigachat_client.executor": "Debug",
+    "Python.interface.executor": "Debug",
+    "Python.main.executor": "Run",
+    "Python.search_docx_hybrid.executor": "Debug",
+    "Python.search_pdf_AI.executor": "Debug",
+    "Python.test_gigachat.executor": "Run",
+    "Python.test_image.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/Magomedov_NM/Downloads/AI_API_to_fill_tender_PDF_support"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Magomedov_NM\Downloads\AI_API_to_fill_tender_PDF_support" />
+      <recent name="C:\Users\Magomedov_NM\Downloads\AI_API_to_fill_tender_PDF_support\services" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Magomedov_NM\Downloads\AI_API_to_fill_tender_PDF_support\data_tenders" />
+      <recent name="C:\Users\Magomedov_NM\Downloads\AI_API_to_fill_tender_PDF_support" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.interface">
+    <configuration name="interface" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI_API_to_fill_tender_PDF_support" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/interface.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI_API_to_fill_tender_PDF_support" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.interface" />
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-02acdf704d18-cbfc7b97e6b2-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-252.28539.27" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="986f730e-710e-4d95-a86c-1bd652cdae22" name="Changes" comment="" />
+      <created>1788752013648</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1788752013648</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.ps1" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/services/data_tenders_source.py</url>
+          <line>100</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/services/data_tenders_source.py</url>
+          <line>76</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/services/search_docx_AI.py</url>
+          <line>1811</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

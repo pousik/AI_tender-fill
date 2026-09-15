@@ -127,71 +127,104 @@ def find_best_template(
     min_coverage: float = 0.55,
     min_anchors: int = 4,
 ):
+    """Быстрый поиск шаблона.
+
+    Убираем N+1 запросов и полный перебор всех строк для каждой строки ТЗ.
+    Сначала строим индексы точных ключей, а SequenceMatcher используется
+    только для остаточных кандидатов.
+    """
     current = [x for x in items if _clean(x.get("param_name")) and not re.fullmatch(r"\*+", _clean(x.get("param_name")))]
     if not current:
         return None, 0.0, {}
 
     candidates = session.query(Tender).order_by(Tender.id.desc()).all()
-    best = (None, 0.0, 0, {})
+    if tr_type_id is not None:
+        tr = session.get(TrType, tr_type_id)
+        if tr is not None:
+            candidates = [t for t in candidates if not t.object_name or norm(t.object_name) == norm(tr.name)]
+    if not candidates:
+        return None, 0.0, {}
 
+    tender_ids = [t.id for t in candidates]
+    all_rows = session.query(TenderParameter).filter(
+        TenderParameter.tender_id.in_(tender_ids),
+        TenderParameter.proposed_value.isnot(None),
+        TenderParameter.proposed_value != "",
+    ).all()
+    rows_by_tender: dict[int, list[TenderParameter]] = {}
+    for row in all_rows:
+        rows_by_tender.setdefault(row.tender_id, []).append(row)
+
+    # Поля текущего документа считаем один раз.
+    prepared_items = []
+    for item in current:
+        prepared_items.append({
+            "item": item,
+            "key": _field_key(session, item.get("param_name", "")),
+            "num": _clean(item.get("num", "")),
+            "req": _clean(item.get("required_val", "")),
+        })
+
+    best = (None, 0.0, {})
     for tender in candidates:
-        # Старые записи без структурных координат могли быть созданы
-        # прежним алгоритмом и уже содержать значения соседних ячеек.
-        # Их нельзя использовать для автозаполнения.
-        rows = _template_rows(session, tender.id)
-        if not rows or not any(r.field_key and r.table_index is not None for r in rows):
+        rows = rows_by_tender.get(tender.id, [])
+        if not rows or not any(r.section_number is not None for r in rows):
             continue
 
-        # object_name хранит имя типа изделия.
-        if tr_type_id is not None and tender.object_name:
-            tr = session.get(TrType, tr_type_id)
-            if tr and norm(tender.object_name) != norm(tr.name):
-                continue
+        unused = {r.id for r in rows}
+        exact_index: dict[tuple[str, str, str], list[TenderParameter]] = {}
+        field_index: dict[str, list[TenderParameter]] = {}
+        prepared_rows = []
+        for row in rows:
+            key = _field_key(session, row.parameter_name or "")
+            num = _clean(row.section_number or "")
+            req = _clean(row.required_value or "")
+            exact_index.setdefault((key, num.rstrip("."), norm(_without_star(req))), []).append(row)
+            field_index.setdefault(key, []).append(row)
+            prepared_rows.append((row, key, num, req))
 
-        if not rows:
-            continue
-
-        # Один ряд шаблона можно использовать только один раз.
-        unused = set(r.id for r in rows)
         matches = {}
         score_sum = 0.0
         strong = 0
-
         ranked = []
-        for item in current:
-            candidates_for_item = []
-            for row in rows:
-                if row.id not in unused or not _is_real_value(row.proposed_value):
-                    continue
-                s = _row_match(session, item, row)
-                if s >= 0.90:
-                    candidates_for_item.append((s, row))
-            candidates_for_item.sort(key=lambda x: x[0], reverse=True)
-            ranked.append((len(candidates_for_item), item, candidates_for_item))
+        for prepared in prepared_items:
+            item, key_a, num_a_raw, req_a = prepared["item"], prepared["key"], prepared["num"], prepared["req"]
+            num_a = num_a_raw.rstrip(".")
+            exact = exact_index.get((key_a, num_a, norm(_without_star(req_a))), [])
+            if not exact and num_a:
+                exact = [r for r in field_index.get(key_a, []) if _clean(r.section_number or "").rstrip(".") == num_a and r.id in unused]
+            opts = [(1.28, r) for r in exact if r.id in unused and _is_real_value(r.proposed_value)]
+            if not opts:
+                # Fuzzy — только строки того же canonical field, а не вся таблица.
+                for row in field_index.get(key_a, []):
+                    if row.id not in unused or not _is_real_value(row.proposed_value):
+                        continue
+                    score = _row_match(session, item, row)
+                    if score >= 0.90:
+                        opts.append((score, row))
+            opts.sort(key=lambda x: x[0], reverse=True)
+            ranked.append((len(opts), item, opts))
 
-        # Сначала фиксируем строки, у которых мало возможных кандидатов.
         ranked.sort(key=lambda x: (x[0] if x[0] else 999, -max([v[0] for v in x[2]], default=0)))
         for count, item, opts in ranked:
             if not opts:
                 continue
-            row = next(((score, r) for score, r in opts if r.id in unused), None)
-            if row is None:
+            selected = next(((score, r) for score, r in opts if r.id in unused), None)
+            if selected is None:
                 continue
-            score, selected = row
-            matches[str(item.get("id"))] = (selected, score)
-            unused.remove(selected.id)
+            score, row = selected
+            matches[str(item.get("id"))] = (row, score)
+            unused.remove(row.id)
             score_sum += min(score, 1.0)
             strong += 1
 
         coverage = score_sum / max(1, len(current))
-        if strong >= min_anchors and coverage >= min_coverage:
-            total = coverage
-            if best[0] is None or total > best[1]:
-                best = (tender, total, strong, matches)
+        if strong >= min_anchors and coverage >= min_coverage and (best[0] is None or coverage > best[1]):
+            best = (tender, coverage, matches)
 
     if best[0] is None:
         return None, 0.0, {}
-    return best[0], best[1], best[3]
+    return best[0], best[1], best[2]
 
 
 def apply_template(
@@ -271,6 +304,35 @@ def save_document_to_knowledge(
             norm(_without_star(row.required_value or "")),
         )
         existing[k] = row
+
+    # ВАЖНО: сохранение документа инженера — это полное состояние строк,
+    # а не только список непустых значений. Если инженер удалил значение
+    # из уже известного шаблона, старую запись необходимо удалить/обнулить,
+    # иначе find_best_template() восстановит её при следующем запуске.
+    current_keys = set()
+    for item in items:
+        name = _clean(item.get("param_name"))
+        if not name or re.fullmatch(r"\*+", name):
+            continue
+        key = (
+            _clean(item.get("num", "")).rstrip("."),
+            _field_key(session, name),
+            norm(_without_star(item.get("required_val", ""))),
+        )
+        current_keys.add(key)
+
+        final_value = _clean(item.get("final_value", ""))
+        current_value = _clean(item.get("current_value", ""))
+        effective_value = _without_star(final_value or current_value)
+        if not effective_value:
+            old_row = existing.get(key)
+            if old_row is not None:
+                session.delete(old_row)
+                existing.pop(key, None)
+                print(
+                    f"[KB TEMPLATE] удалено значение по строке: "
+                    f"{name} / {item.get('num', '')}"
+                )
 
     saved = 0
     for item, value in trusted:
