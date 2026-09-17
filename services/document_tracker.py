@@ -47,10 +47,11 @@ class DocumentTracker(QObject):
         print(message)
         self.status.emit(message)
 
-    def watch(self, path: str | Path, pdf_target: str | Path | None = None):
+    def watch(self, path: str | Path, pdf_target: str | Path | None = None, specialist_name: str | None = None):
         """Начать отслеживание документа. Для DOCX-компаньона PDF можно указать pdf_target."""
         path = str(Path(path).resolve())
         pdf_target = str(Path(pdf_target).resolve()) if pdf_target else None
+        specialist_name = str(specialist_name or "").strip() or None
 
         if not os.path.exists(path):
             self._log(f"[KB] Файл не найден: {path}")
@@ -60,6 +61,8 @@ class DocumentTracker(QObject):
         if path in self._files:
             if pdf_target:
                 self._files[path]["pdf_target"] = pdf_target
+            if specialist_name:
+                self._files[path]["specialist_name"] = specialist_name
             self._log(f"[KB] Уже отслеживается: {Path(path).name}")
             return
 
@@ -75,6 +78,7 @@ class DocumentTracker(QObject):
             "processing": False,
             "learned": False,
             "pdf_target": pdf_target,
+            "specialist_name": specialist_name,
         }
 
         if path not in self.watcher.files():
@@ -131,9 +135,16 @@ class DocumentTracker(QObject):
             if os.path.exists(path):
                 if path not in self.watcher.files():
                     self.watcher.addPath(path)
-
-                info["dirty"] = True
-                info["last_event"] = time.monotonic()
+                try:
+                    size = os.path.getsize(path)
+                    mtime = os.path.getmtime(path)
+                except OSError:
+                    continue
+                if size != info.get("last_size") or mtime != info.get("last_mtime"):
+                    info["dirty"] = True
+                    info["last_event"] = time.monotonic()
+                    info["last_size"] = size
+                    info["last_mtime"] = mtime
 
     # ============================================================
     # PERIODIC CHECK
@@ -216,7 +227,17 @@ class DocumentTracker(QObject):
     # ============================================================
 
     def _is_file_open_in_word(self, path: str) -> bool:
-        path = str(Path(path).resolve()).lower()
+        path_obj = Path(path).resolve()
+        path = str(path_obj).lower()
+
+        # Word создаёт временный lock-файл ~$Имя.docx.
+        # Это надёжнее psutil.open_files() для некоторых версий Office.
+        lock_file = path_obj.parent / f"~${path_obj.name}"
+        try:
+            if lock_file.exists():
+                return True
+        except OSError:
+            pass
 
         for process in psutil.process_iter(["name"]):
             try:
@@ -259,14 +280,26 @@ class DocumentTracker(QObject):
 
         try:
             from services.template_knowledge import capture_docx_file
-            from services.pdf_word_edit import docx_to_pdf
+            from services.pdf_word_edit import docx_to_pdf, set_docx_header_specialist
 
             session = self.session_factory()
             try:
                 # Сначала готовим все результаты. Если PDF-компаньон не может
                 # быть пересохранён, транзакция БЗ не фиксируется и документ
                 # остаётся отслеживаемым для повторной попытки.
-                result = capture_docx_file(session, path)
+                specialist_name = (
+                    str(info.get("specialist_name") or "").strip()
+                    or str(os.getenv("SPECIALIST_NAME") or "").strip()
+                    or None
+                )
+                if specialist_name:
+                    self._log(f"[KB] Специалист для документа: {specialist_name}")
+                    set_docx_header_specialist(path, specialist_name)
+                    self._log(
+                        f"[KB] ФИО специалиста записано в верхний колонтитул: {specialist_name}"
+                    )
+
+                result = capture_docx_file(session, path, specialist_name=specialist_name)
 
                 pdf_target = info.get("pdf_target")
                 if pdf_target:

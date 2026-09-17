@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+from io import BytesIO
 import json
 import os
 import re
@@ -50,6 +51,19 @@ _MODEL_RE = re.compile(
 _VOLT_RE = re.compile(r"(?<!\d)(\d{1,4}(?:[.,]\d+)?)\s*(?:кв|kv)\b", re.IGNORECASE)
 _NUM_RE = re.compile(r"(?<!\d)(\d+(?:[.,]\d+)?)(?!\d)")
 
+_PRODUCT_MODEL_RE = re.compile(
+    r"(?:ТРГ\s*[-‑–—]?\s*УЭТМ\s*[-‑–—]?\s*(\d{1,4})|[А-ЯЁA-Z0-9]{2,}(?:[-_][А-ЯЁA-Z0-9]+)+[-_]\d{1,4})",
+    re.IGNORECASE,
+)
+_INSULATION_TYPE_RE = re.compile(r"\b(фарфор(?:овый|овая|овое|овые)?|полимер(?:ный|ная|ное|ные)?)\b", re.IGNORECASE)
+_INSULATION_COLOR_RE = re.compile(r"\b(бел(?:ый|ая|ое|ые)|коричнев(?:ый|ая|ое|ые)|сер(?:ый|ая|ое|ые)|черн(?:ый|ая|ое|ые)|черный|серый|белый|коричневый)\b", re.IGNORECASE)
+_TYPE_HINTS = ("тип внешней изоляции", "тип изоляции", "марка", "заводской тип", "исполнение")
+_MANUFACTURER_RE = re.compile(
+    r'''ООО\s*[«\"]?Эльмаш\s*\(\s*УЭТМ\s*\)[»\"]?''',
+    re.IGNORECASE,
+)
+
+
 _ALIAS_GROUPS = (
     ("номинальное напряжение", "ном напряжение", "номинальное напряжение uн"),
     ("наибольшее рабочее напряжение", "максимальное рабочее напряжение"),
@@ -67,6 +81,7 @@ _ALIAS_GROUPS = (
     ("уровень шума при работе", "уровень шума"),
     ("габаритные размеры", "габаритные размеры трансформатора"),
     ("масса трансформатора тока", "масса трансформатора", "масса"),
+    ("изготовитель", "производитель", "предприятие-изготовитель", "предприятие изготовитель", "изготовитель оборудования"),
 )
 _ALIAS_TO_CANON = {alias: group[0] for group in _ALIAS_GROUPS for alias in group}
 
@@ -156,6 +171,42 @@ def _split_options(text: str) -> list[str]:
     return list(dict.fromkeys(out))
 
 
+def _extract_product_signature(text: str) -> dict[str, str | None]:
+    """Извлекает признаки исполнения один раз из текста документа."""
+    text = _clean_text(text)
+    model = _model_name(text)
+    voltage = _model_voltage(model) if model else None
+    if not voltage:
+        m = _VOLT_RE.search(text)
+        voltage = m.group(1).replace(",", ".") if m else None
+    ins = _INSULATION_TYPE_RE.search(text)
+    color = _INSULATION_COLOR_RE.search(text)
+    return {
+        "model": model,
+        "voltage_class": voltage,
+        "product_type": ("ТРГ-УЭТМ" if model else None),
+        "insulation_type": ins.group(1).lower() if ins else None,
+        "insulation_color": color.group(1).lower() if color else None,
+    }
+
+def _profile_traits(records: list[DataTenderRecord], model: str) -> dict[str, Any]:
+    text = " ".join([model] + [f"{r.param_name} {r.value}" for r in records])
+    sig = _extract_product_signature(text)
+    all_text = " ".join([f"{r.param_name} {r.value}" for r in records])
+    ins_types = sorted({m.group(1).lower() for m in _INSULATION_TYPE_RE.finditer(all_text)})
+    colors = sorted({m.group(1).lower() for m in _INSULATION_COLOR_RE.finditer(all_text)})
+    sig["insulation_types"] = ins_types
+    sig["insulation_colors"] = colors
+    return sig
+
+def _profile_signature_from_records(records: list[DataTenderRecord], model: str) -> dict[str, Any]:
+    text_parts = [model]
+    for r in records:
+        text_parts.append(f"{r.param_name} {r.value}")
+    sig = _extract_product_signature(" ".join(text_parts))
+    # Нормализуем тип/цвет по значениям параметров, если они встретились там.
+    return sig
+
 @dataclass(frozen=True)
 class DataTenderRecord:
     param_name: str
@@ -173,6 +224,7 @@ class DataTendersKnowledge:
         base = Path(root) if root else Path(__file__).resolve().parents[1]
         self.root = self._find_root(base)
         self._signature: tuple[tuple[str, int, int], ...] = ()
+        self._initialized = False
         self._records: list[DataTenderRecord] = []
         self._profiles: dict[str, dict[str, Any]] = {}
         self._image_records: list[dict[str, Any]] = []
@@ -182,6 +234,8 @@ class DataTendersKnowledge:
         self._index_param: dict[str, list[DataTenderRecord]] = {}
         self._model_records: dict[str, list[DataTenderRecord]] = {}
         self._model_keys: tuple[str, ...] = ()
+        self._profile_signatures: dict[str, dict[str, str | None]] = {}
+        self._signature_index: dict[tuple[str | None, str | None, str | None, str | None], tuple[str, ...]] = {}
         self._context_cache_key: tuple[Any, ...] | None = None
         self._context_cache: dict[str, Any] | None = None
         self._image_ocr_cache_path = self.root / ".image_ocr_cache.json"
@@ -189,6 +243,12 @@ class DataTendersKnowledge:
 
     @staticmethod
     def _find_root(base: Path) -> Path:
+        base = base.resolve()
+        # Поддерживаем как корень проекта, так и прямую передачу самой папки.
+        if base.is_dir() and base.name.lower().replace(" ", "_") == "data_tenders":
+            return base
+        if base.is_dir() and base.name.lower() == "tenders" and base.parent.name.lower() == "data":
+            return base
         for candidate in (base / "data_tenders", base / "data" / "tenders", base / "data tenders"):
             if candidate.is_dir():
                 return candidate
@@ -203,18 +263,30 @@ class DataTendersKnowledge:
         return tuple((str(p), p.stat().st_mtime_ns, p.stat().st_size) for p in self._files())
 
     def refresh(self, force: bool = False, *, ocr_images: bool = False) -> None:
+        # data_tenders считается неизменяемым в рамках одного запуска.
+        # Не делаем rglob/stat на каждом lookup. Для принудительной проверки
+        # используйте refresh(force=True) или DATA_TENDERS_REFRESH_CHECK=1.
+        if self._initialized and not force and os.getenv("DATA_TENDERS_REFRESH_CHECK", "0") != "1":
+            if ocr_images and not self._image_records:
+                if os.getenv("DATA_TENDERS_VISION_LIVE", "0") == "1":
+                    self._build_image_index()
+                else:
+                    self._image_records = self._load_cached_image_records() or []
+            return
         signature = self._get_signature()
         if not force and signature == self._signature:
             if ocr_images and not self._image_records:
                 if os.getenv("DATA_TENDERS_VISION_LIVE", "0") == "1":
                     self._build_image_index()
                 else:
-                    self._image_records = self._load_cached_image_records()
+                    self._image_records = self._load_cached_image_records() or []
             return
         records: list[DataTenderRecord] = []
         profiles: dict[str, dict[str, Any]] = defaultdict(lambda: {
             "model": None,
             "voltage": None,
+            "product_type": "ТРГ-УЭТМ",
+            "manufacturer": None,
             "parameters": {},
             "images": [],
             "source_files": [],
@@ -224,21 +296,43 @@ class DataTendersKnowledge:
                 doc = Document(path)
                 file_records, file_profiles = self._parse_doc(doc, path.name)
                 records.extend(file_records)
+                # Важные реквизиты часто лежат в обычных абзацах, а не в таблицах.
+                paragraphs_text = "\n".join(_clean_text(x.text) for x in doc.paragraphs if _clean_text(x.text))
+                metadata = self._extract_document_metadata(paragraphs_text)
+                # Если в основной части абзацев модель не попалась, используем текст всех таблиц.
+                all_models_in_file = list(metadata.get("models") or [])
+                if not all_models_in_file:
+                    all_models_in_file = list(file_profiles.keys())
+                manufacturer = metadata.get("manufacturer")
+                if manufacturer and all_models_in_file:
+                    for model in all_models_in_file:
+                        key = _param_key("Изготовитель")
+                        rec = DataTenderRecord("Изготовитель", manufacturer, model, _model_voltage(model), path.name, -2, -1)
+                        records.append(rec)
+                        file_profiles.setdefault(model, {"parameters": {}}).setdefault("parameters", {}).setdefault(key, []).append(manufacturer)
                 for model, profile in file_profiles.items():
                     dst = profiles[model]
                     dst["model"] = model
                     dst["voltage"] = _model_voltage(model)
+                    dst["product_type"] = "ТРГ-УЭТМ"
+                    if manufacturer:
+                        dst["manufacturer"] = manufacturer
                     if path.name not in dst["source_files"]:
                         dst["source_files"].append(path.name)
                     for key, values in profile.get("parameters", {}).items():
                         dst["parameters"].setdefault(key, []).extend(v for v in values if v not in dst["parameters"].get(key, []))
             except Exception as exc:
                 print(f"[DATA_TENDERS] пропущен {path.name}: {exc}")
+        valid_models = {m for m in profiles if _model_voltage(m) in {"35", "110", "220", "330", "500", "750"}}
+        records = [r for r in records if not r.model or r.model in valid_models]
+        profiles = {m: v for m, v in profiles.items() if m in valid_models}
         self._records = records
         self._profiles = dict(profiles)
         self._build_record_indexes()
+        self._build_profile_signature_index()
         self._model_keys = tuple(sorted(self._profiles))
         self._signature = signature
+        self._initialized = True
         self._image_records = []
         self._context_cache_key = None
         self._context_cache = None
@@ -246,7 +340,7 @@ class DataTendersKnowledge:
             if os.getenv("DATA_TENDERS_VISION_LIVE", "0") == "1":
                 self._build_image_index()
             else:
-                self._image_records = self._load_cached_image_records()
+                self._image_records = self._load_cached_image_records() or []
         print(f"[DATA_TENDERS] индекс: files={len(signature)} records={len(records)} models={len(self._profiles)} root={self.root}")
 
     def _parse_doc(self, doc: Document, filename: str) -> tuple[list[DataTenderRecord], dict[str, Any]]:
@@ -313,6 +407,18 @@ class DataTendersKnowledge:
                         out.append(rec)
         return out, profiles
 
+    @staticmethod
+    def _extract_document_metadata(text: str) -> dict[str, Any]:
+        """Извлекает общие реквизиты документа, которые не обязаны находиться в таблицах."""
+        low = _norm(text)
+        models = _all_models(text)
+        product_type = "ТРГ-УЭТМ" if models or "трг-уэтм" in low else None
+        manufacturer = None
+        m = _MANUFACTURER_RE.search(text or "")
+        if m:
+            manufacturer = _clean_text(m.group(0))
+        return {"product_type": product_type, "manufacturer": manufacturer, "models": models}
+
     def _build_record_indexes(self) -> None:
         exact: defaultdict[tuple[str, str | None, str | None], list[DataTenderRecord]] = defaultdict(list)
         by_pm: defaultdict[tuple[str, str | None], list[DataTenderRecord]] = defaultdict(list)
@@ -334,11 +440,112 @@ class DataTendersKnowledge:
         self._index_param = dict(by_p)
         self._model_records = dict(by_m)
 
+    def _build_profile_signature_index(self) -> None:
+        signatures: dict[str, dict[str, Any]] = {}
+        buckets: defaultdict[tuple[str | None, str | None, str | None, str | None], list[str]] = defaultdict(list)
+        for model, profile in self._profiles.items():
+            recs = [
+                DataTenderRecord(k, v, model, _model_voltage(model), "", -1, -1)
+                for k, vals in profile.get("parameters", {}).items()
+                for v in vals[:32]
+            ]
+            sig = _profile_traits(recs, model)
+            sig["product_type"] = sig.get("product_type") or "ТРГ-УЭТМ"
+            manufacturer_values = profile.get("parameters", {}).get(_param_key("Изготовитель"), [])
+            if manufacturer_values:
+                sig["manufacturer"] = manufacturer_values[0]
+            signatures[model] = sig
+            key = (
+                _norm(sig.get("product_type") or "") or None,
+                _norm(sig.get("voltage_class") or "") or None,
+                _norm(sig.get("insulation_type") or "") or None,
+                _norm(sig.get("insulation_color") or "") or None,
+            )
+            buckets[key].append(model)
+        self._profile_signatures = signatures
+        self._signature_index = {k: tuple(v) for k, v in buckets.items()}
+
+
+    def select_profile(
+        self,
+        text: str,
+        items: list[dict] | None = None,
+    ) -> tuple[str | None, dict[str, Any], list[str]]:
+        """Определяет паспорт изделия по типу, классу напряжения, изоляции и цвету."""
+        combined = [str(text or "")]
+        for item in items or []:
+            combined.extend([
+                str(item.get("param_name", "")),
+                str(item.get("required_val", "")),
+                str(item.get("current_value", "")),
+            ])
+        all_text = " ".join(combined)
+        sig = _extract_product_signature(all_text)
+        sig["product_type"] = sig.get("product_type") or ("ТРГ-УЭТМ" if "трг" in _norm(all_text) and "уэтм" in _norm(all_text) else None)
+        mm = _MANUFACTURER_RE.search(all_text)
+        if mm:
+            sig["manufacturer"] = _clean_text(mm.group(0))
+        sig["insulation_types"] = sorted({m.group(1).lower() for m in _INSULATION_TYPE_RE.finditer(all_text)})
+        sig["insulation_colors"] = sorted({m.group(1).lower() for m in _INSULATION_COLOR_RE.finditer(all_text)})
+        model = sig.get("model")
+        if model and model in self._profiles:
+            return model, sig, [model]
+
+        desired_voltage = _norm(str(sig.get("voltage_class") or "")) or None
+        desired_type = _norm(str(sig.get("product_type") or "")) or ("трг-уэтм" if "трг" in _norm(all_text) and "уэтм" in _norm(all_text) else None)
+        desired_ins = set(sig.get("insulation_types") or [])
+        desired_color = set(sig.get("insulation_colors") or [])
+
+        scored: list[tuple[int, str]] = []
+        if desired_voltage:
+            voltage_models = [m for m in self._model_keys if _same_voltage(desired_voltage, _model_voltage(m))]
+            if len(voltage_models) == 1:
+                sig["model"] = voltage_models[0]
+                sig["product_type"] = desired_type or "ТРГ-УЭТМ"
+                return voltage_models[0], sig, voltage_models
+        for m in self._model_keys:
+            ps = self._profile_signatures.get(m, {})
+            score = 0
+            ptype = _norm(str(ps.get("product_type") or "")) or None
+            pvoltage = _norm(str(ps.get("voltage_class") or "")) or None
+            pins = set(ps.get("insulation_types") or [])
+            pcolors = set(ps.get("insulation_colors") or [])
+            if desired_type and ptype == desired_type:
+                score += 3
+            elif desired_type and ptype and ptype != desired_type:
+                continue
+            if desired_voltage:
+                if pvoltage == desired_voltage:
+                    score += 6
+                else:
+                    continue
+            if desired_ins:
+                if pins and desired_ins.isdisjoint(pins):
+                    continue
+                if pins & desired_ins:
+                    score += 4
+            if desired_color:
+                if pcolors and desired_color.isdisjoint(pcolors):
+                    continue
+                if pcolors & desired_color:
+                    score += 5
+            scored.append((score, m))
+        scored.sort(key=lambda x: (-x[0], x[1]))
+        candidates = [m for _, m in scored]
+        if not candidates:
+            return None, sig, []
+        best_score = scored[0][0]
+        best = [m for sc, m in scored if sc == best_score]
+        return (best[0] if len(best) == 1 else None), sig, candidates[:32]
+
     def detect_model(self, text: str, items: list[dict] | None = None) -> str | None:
         self.refresh()
         model = _model_name(text)
         if model:
             return model
+        selected, _sig, _candidates = self.select_profile(text, items)
+        if selected:
+            return selected
         votes: dict[str, int] = defaultdict(int)
         for item in items or []:
             for m in _all_models(str(item.get("param_name", "")) + " " + str(item.get("required_val", ""))):
@@ -378,6 +585,15 @@ class DataTendersKnowledge:
         req = _clean_text(required_val)
         val = _clean_text(value)
         if not req or req == "*":
+            return True
+        # Служебные инструкции ТЗ («Указать», «Определить проектом»,
+        # «Согласно ...») не являются ограничением значения. В этих случаях
+        # берём подтверждённый факт из выбранного профиля data_tenders.
+        req_low = _norm(req)
+        if any(token in req_low for token in (
+            "указать", "определить проектом", "определяется проектом",
+            "согласно", "в соответствии", "по согласованию",
+        )):
             return True
         nr, nv = _norm(req), _norm(val)
         if nr == nv or nr in nv:
@@ -421,6 +637,7 @@ class DataTendersKnowledge:
         voltage: str | None = None,
         required_val: str = "",
         min_score: float = 0.91,
+        profile_signature: dict[str, str | None] | None = None,
     ) -> tuple[str | None, str | None, float]:
         self.refresh()
         if not param_name.strip() or not _clean_text(required_val) and _param_key(param_name) not in {"номинальное напряжение"}:
@@ -432,6 +649,30 @@ class DataTendersKnowledge:
         voltage_norm = _norm(voltage) if voltage else None
         pkey = _param_key(param_name)
 
+        # Новый основной фильтр: участвуют только записи выбранного паспорта изделия.
+        candidates_by_profile = []
+        if profile_signature:
+            desired_model = profile_signature.get("model")
+            desired_voltage = _norm(str(profile_signature.get("voltage_class") or "")) or None
+            desired_type = _norm(str(profile_signature.get("product_type") or "")) or None
+            desired_ins = set(profile_signature.get("insulation_types") or [])
+            desired_color = set(profile_signature.get("insulation_colors") or [])
+            for m in self._model_keys:
+                ps = self._profile_signatures.get(m, {})
+                if desired_model and m != desired_model:
+                    continue
+                if desired_voltage and _norm(str(ps.get("voltage_class") or "")) != desired_voltage:
+                    continue
+                if desired_type and ps.get("product_type") and _norm(str(ps.get("product_type"))) != desired_type:
+                    continue
+                pins = set(ps.get("insulation_types") or [])
+                pcolors = set(ps.get("insulation_colors") or [])
+                if desired_ins and pins and desired_ins.isdisjoint(pins):
+                    continue
+                if desired_color and pcolors and desired_color.isdisjoint(pcolors):
+                    continue
+                candidates_by_profile.extend(self._model_records.get(_norm(m), ()))
+
         # Основной путь: O(1) хеш-поиск по нормализованному параметру,
         # модели и напряжению. Сначала самый строгий ключ.
         raw_candidates: list[DataTenderRecord] = []
@@ -441,6 +682,11 @@ class DataTendersKnowledge:
             raw_candidates = list(self._index_param_model.get((pkey, model_norm), ()))
         if not raw_candidates:
             raw_candidates = list(self._index_param.get(pkey, ()))
+        if candidates_by_profile:
+            allowed_ids = {id(r) for r in candidates_by_profile}
+            raw_candidates = [r for r in raw_candidates if id(r) in allowed_ids]
+        elif profile_signature:
+            raw_candidates = []
 
         candidates: list[tuple[float, DataTenderRecord, str]] = []
         # Быстрый путь: после строгого O(1)-ключа достаточно одного кандидата.
@@ -482,14 +728,15 @@ class DataTendersKnowledge:
         return winner[2], f"DATA_TENDERS:{winner[1].source_file}", best_score
 
     def get_constant(self, param_name: str, *, text_context: str = "", model: str | None = None, voltage: str | None = None, required_val: str = ""):
-        # В обычном заполнении model/voltage уже определены один раз на документ.
-        # Не запускаем повторный поиск по всему тексту для каждой строки.
-        if not model:
+        # Обычно model/voltage уже вычислены один раз на документе.
+        if not model and text_context:
             model = self.detect_model(text_context)
-        elif not _model_name(model):
-            model = None
+        if model and not _model_name(model):
+            model = _model_name(str(model))
         if not voltage:
-            voltage = _model_voltage(model) or self.detect_voltage(text_context)
+            voltage = _model_voltage(model)
+            if not voltage and text_context:
+                voltage = self.detect_voltage(text_context)
         return self.lookup(param_name, model=model, voltage=voltage, required_val=required_val)
 
     def model_profile(self, model: str) -> dict[str, Any]:
@@ -497,7 +744,11 @@ class DataTendersKnowledge:
         profile = dict(self._profiles.get(model, {}))
         profile["model"] = model
         profile["voltage"] = _model_voltage(model)
-        profile["images"] = [x for x in self._image_records if model in x.get("models", [])]
+        image_records = self._image_records if isinstance(self._image_records, list) else []
+        profile["images"] = [
+            x for x in image_records
+            if isinstance(x, dict) and model in (x.get("models") or [])
+        ]
         return profile
 
     def build_context(self, *, model: str | None = None, voltage: str | None = None, limit: int = 120) -> dict[str, Any]:
@@ -590,18 +841,11 @@ class DataTendersKnowledge:
         image_bytes, mime = self._prepare_image_for_vision(raw, suffix)
         prompt = os.getenv(
             "DATA_TENDERS_VISION_PROMPT",
-            """Ты анализируешь технический документ трансформатора тока.
-Извлеки ВСЕ читаемые технические данные с изображения, включая таблицы, схемы,
-чертежные размеры, массы, климатические исполнения, изоляцию, марку/тип изделия
-и подписи. Сохраняй числа, единицы и обозначения максимально дословно.
-Особенно внимательно распознавай многозначные строки и значения, связанные с
-конкретной моделью/маркой. Не додумывай отсутствующие данные.
-Верни строго JSON: {
-  "model_mentions": ["..."],
-  "parameters": [{"name": "...", "value": "...", "unit": "...", "model": "..."}],
-  "raw_text": "полный связный текст изображения",
-  "notes": ["..."]
-}"""
+            "Извлеки все параметры оборудования и их значения со схемы/изображения. "
+            "Особенно внимательно прочитай таблицы, габаритные размеры, массу, "
+            "марку/тип изделия, класс напряжения, тип и цвет изоляции. "
+            "Сохраняй числа, единицы измерения и обозначения дословно. Не додумывай "
+            "отсутствующие данные. Верни только данные, которые действительно видны на изображении."
         )
         if client is not None:
             return ask_vision_json(client, image_bytes, prompt, mime_type=mime)
@@ -874,6 +1118,104 @@ class DataTendersKnowledge:
                 "source": "DATA_TENDERS_IMAGE_VISION_CACHE",
             })
         self._image_records = records
+
+    def ensure_vision_for_model(self, model: str, max_images: int | None = None) -> int:
+        """Однократно распознаёт Vision только изображения выбранного изделия.
+
+        В обычной обработке не гоняем все изображения всех data_tenders. Берём
+        только картинки, связанные с выбранной моделью, и сохраняем результат в кэш.
+        Повторный запуск сетевых запросов не делает.
+        """
+        self.refresh(ocr_images=False)
+        cached = self._load_cached_image_records()
+        cached_keys = {(x.get("source_file"), x.get("image")) for x in cached}
+        if max_images is None:
+            try:
+                max_images = int(os.getenv("DATA_TENDERS_VISION_MODEL_MAX", "6"))
+            except ValueError:
+                max_images = 6
+        max_images = max(0, max_images)
+        if max_images == 0 or os.getenv("DATA_TENDERS_VISION_NO_NETWORK", "0") == "1":
+            self._image_records = cached
+            return 0
+
+        target: list[tuple[Path, str, bytes, list[str], str]] = []
+        for path in self._files():
+            try:
+                doc = Document(path)
+                relmap = self._relationship_map(doc)
+                blocks = self._block_sequence(doc, relmap)
+                known_models = set(self._profiles)
+                file_text = _clean_text(" ".join(b.get("text", "") for b in blocks))
+                file_has_model = model in _all_models(file_text)
+                with zipfile.ZipFile(path, "r") as zf:
+                    media = {Path(n).name: n for n in zf.namelist() if n.startswith("word/media/")}
+                    local_candidates = []
+                    for bi, block in enumerate(blocks):
+                        if not block.get("images"):
+                            continue
+                        near_text = _clean_text(" ".join(b.get("text", "") for b in blocks[max(0, bi - 4):min(len(blocks), bi + 5)]))
+                        near_models = [m for m in _all_models(near_text) if m in known_models]
+                        priority = 2 if model in near_models else (1 if file_has_model else 0)
+                        for image_name in block["images"]:
+                            if image_name not in media or (path.name, image_name) in cached_keys:
+                                continue
+                            local_candidates.append((priority, bi, image_name, near_text[:4000]))
+                    local_candidates.sort(key=lambda x: (-x[0], x[1]))
+                    for priority, bi, image_name, near_text in local_candidates:
+                        raw = zf.read(media[image_name])
+                        target.append((path, image_name, raw, [model], near_text))
+                        if len(target) >= max_images:
+                            break
+            except Exception as exc:
+                print(f"[DATA_TENDERS][VISION_SELECT] {path.name}: {exc}")
+            if len(target) >= max_images:
+                break
+
+        if not target:
+            self._image_records = cached
+            return 0
+
+        cache = self._load_image_ocr_cache()
+        added = 0
+        with open_client() as client:
+            for path, image_name, raw, models, near_text in target:
+                digest = hashlib.sha1(raw).hexdigest()
+                cache_key = f"{path.resolve()}::{image_name}::{digest}"
+                try:
+                    image_bytes, mime = self._prepare_image_for_vision(raw, Path(image_name).suffix)
+                    vision = ask_vision_json(
+                        client=client,
+                        image_bytes=image_bytes,
+                        user_prompt=os.getenv(
+                            "DATA_TENDERS_VISION_PROMPT",
+                            "Извлеки все параметры оборудования и их значения со схемы/изображения."
+                        ),
+                        mime_type=mime,
+                    )
+                    # ask_vision_json() в зависимости от версии SDK может вернуть
+                    # None/пустое значение. Это не должно ломать весь pipeline.
+                    if not isinstance(vision, dict):
+                        vision = {"parameters": [], "raw_text": str(vision or ""), "notes": ["empty_or_non_dict_response"]}
+                    params = vision.get("parameters") or []
+                    if not isinstance(params, list):
+                        params = []
+                        vision["parameters"] = params
+                    text = _clean_text(
+                        vision.get("raw_text", "") or " ".join(
+                            f"{p.get('name','')}: {p.get('value','')} {p.get('unit','')}"
+                            for p in params if isinstance(p, dict)
+                        )
+                    )
+                    cache[cache_key] = {"vision": vision, "text": text, "models": models, "source_file": path.name, "image": image_name, "context": near_text}
+                    added += 1
+                except Exception as exc:
+                    print(f"[DATA_TENDERS][VISION] {path.name}/{image_name}: {exc}")
+        self._save_image_ocr_cache()
+        self._image_records = self._load_cached_image_records() or []
+        self._context_cache_key = None
+        self._context_cache = None
+        return added
 
     def build_full_context(
         self,

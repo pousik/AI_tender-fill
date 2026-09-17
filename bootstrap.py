@@ -12,10 +12,18 @@ engine = create_engine(f"sqlite:///{DB_PATH}")
 Session = sessionmaker(bind=engine)
 
 
-def migrate_tender_parameter_columns():
-    """Добавляет структурные поля в старую SQLite БД без удаления данных."""
+def migrate_tender_columns():
+    """Миграция старой БД: ФИО хранится у шаблона Tender, а не у его строк."""
     inspector = inspect(engine)
-    cols = {c["name"] for c in inspector.get_columns("tender_parameters")}
+
+    tender_cols = {c["name"] for c in inspector.get_columns("tenders")}
+    if "specialist_name" not in tender_cols:
+        with engine.begin() as conn:
+            conn.execute(
+                text("ALTER TABLE tenders ADD COLUMN specialist_name VARCHAR(255)")
+            )
+
+    parameter_cols = {c["name"] for c in inspector.get_columns("tender_parameters")}
     additions = {
         "table_index": "INTEGER",
         "target_cell_index": "INTEGER",
@@ -23,14 +31,14 @@ def migrate_tender_parameter_columns():
     }
     with engine.begin() as conn:
         for name, typ in additions.items():
-            if name not in cols:
+            if name not in parameter_cols:
                 conn.execute(text(f"ALTER TABLE tender_parameters ADD COLUMN {name} {typ}"))
 
 
 def bootstrap():
     init_database()
     Base.metadata.create_all(engine)
-    migrate_tender_parameter_columns()
+    migrate_tender_columns()
     # Импортируем старую шаблонную БЗ один раз. После первого импорта
     # источником является единая transformers.db.
     legacy = ROOT / "tender.db"

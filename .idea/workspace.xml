@@ -5,30 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="986f730e-710e-4d95-a86c-1bd652cdae22" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/test_image.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AI_API_to_fill_tender_PDF_support.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AI_API_to_fill_tender_PDF_support.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/1БП 769 001ТУ от января 2026 г.docx" beforeDir="false" afterPath="$PROJECT_DIR$/data_tenders/1БП 769 001ТУ от января 2026 г.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1БП.769.001 РЭ от января 2026 г.docx" beforeDir="false" afterPath="$PROJECT_DIR$/data_tenders/1БП.769.001 РЭ от января 2026 г.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1БП.769.001-01 РЭ от января 2026 г.docx" beforeDir="false" afterPath="$PROJECT_DIR$/data_tenders/1БП.769.001-01 РЭ от января 2026 г.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6da5de63-95fe-4730-9fc1-16683ad9b29c Технические требования ПС Нижний Куранах.docx" beforeDir="false" afterPath="$PROJECT_DIR$/6da5de63-95fe-4730-9fc1-16683ad9b29c Технические требования ПС Нижний Куранах.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README_READY.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_READY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.tmp_normalized/30.11.2021 ТехТреб ТРГ-110 поз.20 Поляково.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/tr_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/tr_type.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/data_tenders_knowledge.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/data_tenders_knowledge.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/document_tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/document_tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/gigachat_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/gigachat_client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/normative_docs.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/pdf_ai_extractor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/pdf_document_service.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/search_docx.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/pdf_word_edit.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/pdf_word_edit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/search_docx_AI.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/search_docx_AI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/search_pdf_AI.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/search_pdf_AI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/template_knowledge.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/template_knowledge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tender.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/reset_legacy_templates.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/transformers.db" beforeDir="false" afterPath="$PROJECT_DIR$/transformers.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformers_legacy.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Заполненный_30.11.2021 ТехТреб ТРГ-110 поз.20 Поляково.docx.audit.json" beforeDir="false" afterPath="$PROJECT_DIR$/Заполненный_30.11.2021 ТехТреб ТРГ-110 поз.20 Поляково.docx.audit.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Заполненный_6da5de63-95fe-4730-9fc1-16683ad9b29c Технические требования ПС Нижний Куранах.docx.audit.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,11 +154,6 @@
           <url>file://$PROJECT_DIR$/services/data_tenders_source.py</url>
           <line>76</line>
           <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/services/search_docx_AI.py</url>
-          <line>1811</line>
-          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

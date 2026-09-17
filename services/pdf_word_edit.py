@@ -117,3 +117,91 @@ def docx_to_pdf(docx_path: str | Path, pdf_path: str | Path) -> Path:
 
 def prepare_pdf_for_word_editing(pdf_path: str | Path, editable_docx_path: str | Path | None = None) -> Path:
     return pdf_to_editable_docx(pdf_path, editable_docx_path)
+
+
+def set_docx_header_specialist(docx_path: str | Path, specialist_name: str) -> None:
+    """Записывает ``Заполнил специалист: ФИО`` в верхний колонтитул DOCX.
+
+    Вызов выполняется до открытия Word и повторно после закрытия, поэтому ФИО
+    не зависит от QFileSystemWatcher. Обрабатываются обычный, first-page и
+    even-page headers; существующее содержимое не удаляется.
+    """
+    from docx import Document
+    from docx.shared import Pt
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+    name = str(specialist_name or "").strip()
+    if not name:
+        raise ValueError("ФИО специалиста не задано")
+
+    path = Path(docx_path).expanduser().resolve()
+    if not path.exists():
+        raise FileNotFoundError(path)
+
+    doc = Document(str(path))
+    marker = "Заполнил специалист:"
+    text = f"{marker} {name}"
+
+    def write_header(header):
+        # Обновляем существующую строку специалиста.
+        for paragraph in list(header.paragraphs):
+            if marker.lower() in (paragraph.text or "").lower():
+                paragraph.text = text
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                for run in paragraph.runs:
+                    run.font.size = Pt(9)
+                return
+
+        # В том числе для header, содержащего таблицы/логотипы, добавляем отдельный
+        # обычный paragraph и ставим его первым элементом XML.
+        paragraph = header.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        run = paragraph.add_run(text)
+        run.font.size = Pt(9)
+
+        p_el = paragraph._p
+        header._element.remove(p_el)
+        children = list(header._element)
+        insert_at = 0
+        for i, child in enumerate(children):
+            if child.tag.endswith('}p') or child.tag.endswith('}tbl'):
+                insert_at = i
+                break
+            insert_at = i + 1
+        header._element.insert(insert_at, p_el)
+
+    processed = set()
+    for section in doc.sections:
+        headers = [section.header]
+        if section.different_first_page_header_footer:
+            headers.append(section.first_page_header)
+        try:
+            if doc.settings.odd_and_even_pages_header_footer:
+                headers.append(section.even_page_header)
+        except Exception:
+            pass
+        for header in headers:
+            key = id(header._element)
+            if key in processed:
+                continue
+            processed.add(key)
+            write_header(header)
+
+    doc.save(str(path))
+
+    # Контроль сохранённого файла: читаем его заново.
+    check = Document(str(path))
+    found = []
+    for section in check.sections:
+        headers = [section.header, section.first_page_header]
+        try:
+            headers.append(section.even_page_header)
+        except Exception:
+            pass
+        for header in headers:
+            found.extend((p.text or '').strip() for p in header.paragraphs)
+    if text not in found:
+        raise RuntimeError(
+            f"ФИО специалиста не найдено после сохранения DOCX: {text}"
+        )
+

@@ -18,12 +18,38 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from models.tr_type import Tender, TenderParameter, ParameterProfile, ProfileParameter, TrType
-from services.knowledge_base import canonicalize_field, norm
+from models.tr_type import Tender, TenderParameter, TrType
+from services.data_tenders_knowledge import _param_key, _norm as _dt_norm
+
+
+def norm(value: str | None) -> str:
+    return _dt_norm(value or "")
 
 
 def _clean(value: Any) -> str:
     return re.sub(r"\s+", " ", str(value or "")).strip()
+
+
+def _canonical_filename(value: str | None) -> str:
+    """Приводит имя заполненного/редактируемого файла к имени исходного тендера."""
+    value = _clean(value)
+    if not value:
+        return ""
+    # Убираем технические префиксы/суффиксы, появляющиеся при автозаполнении PDF/DOCX.
+    value = re.sub(r"^заполненный[_\s-]*", "", value, flags=re.IGNORECASE)
+    value = re.sub(r"[_\s-]*для_редактирования(?=\.[^.]+$)", "", value, flags=re.IGNORECASE)
+    value = re.sub(r"\.(docx|doc|pdf)$", "", value, flags=re.IGNORECASE)
+    return norm(value)
+
+
+def _filename_similarity(a: str | None, b: str | None) -> float:
+    a_key = _canonical_filename(a)
+    b_key = _canonical_filename(b)
+    if not a_key or not b_key:
+        return 0.0
+    if a_key == b_key or a_key in b_key or b_key in a_key:
+        return 1.0
+    return SequenceMatcher(None, a_key, b_key).ratio()
 
 
 def _without_star(value: Any) -> str:
@@ -59,16 +85,9 @@ def _req_similar(a: str, b: str) -> bool:
 
 
 def _field_key(session: Session, name: str) -> str:
-    # canonicalize_field читает правила из БД, поэтому кэшируем результат
-    # на время одного SQLAlchemy-сеанса. Это критично при сравнении сотен строк.
-    cache = session.info.setdefault("template_field_key_cache", {})
-    raw = _clean(name)
-    cache_key = norm(raw)
-    if cache_key in cache:
-        return cache[cache_key]
-    value = canonicalize_field(session, raw) or norm(raw)
-    cache[cache_key] = value
-    return value
+    # ВАЖНО: ключ поля для шаблона вычисляется без чтения справочных
+    # констант из БД. БД используется здесь только для хранения самого шаблона.
+    return _param_key(_clean(name)) or norm(name)
 
 
 def _template_rows(session: Session, tender_id: int) -> list[TenderParameter]:
@@ -126,6 +145,9 @@ def find_best_template(
     voltage: str | None = None,
     min_coverage: float = 0.55,
     min_anchors: int = 4,
+    *,
+    filename: str | None = None,
+    model: str | None = None,
 ):
     """Быстрый поиск шаблона.
 
@@ -141,7 +163,22 @@ def find_best_template(
     if tr_type_id is not None:
         tr = session.get(TrType, tr_type_id)
         if tr is not None:
-            candidates = [t for t in candidates if not t.object_name or norm(t.object_name) == norm(tr.name)]
+            target_name = norm(tr.name)
+            candidates = [
+                t for t in candidates
+                if not t.object_name
+                or norm(t.object_name) == target_name
+                or (model and norm(t.object_name) == norm(model))
+            ]
+    elif model:
+        model_norm = norm(model)
+        # Не отбрасываем filename-подходящие шаблоны только из-за старого object_name.
+        candidates = [
+            t for t in candidates
+            if not t.object_name
+            or model_norm in norm(t.object_name)
+            or _filename_similarity(filename, t.filename) >= 0.92
+        ]
     if not candidates:
         return None, 0.0, {}
 
@@ -219,8 +256,25 @@ def find_best_template(
             strong += 1
 
         coverage = score_sum / max(1, len(current))
-        if strong >= min_anchors and coverage >= min_coverage and (best[0] is None or coverage > best[1]):
-            best = (tender, coverage, matches)
+        filename_score = _filename_similarity(filename, tender.filename)
+        object_score = 0.0
+        if model and tender.object_name:
+            object_score = 1.0 if norm(model) == norm(tender.object_name) else (0.9 if norm(model) in norm(tender.object_name) else 0.0)
+
+        # При том же файле/изделии допускаем частичный шаблон. Это важно для
+        # шаблонов, куда специалист ранее сохранил только 5–10 исправленных строк.
+        same_document = filename_score >= 0.92
+        same_model = object_score >= 0.9
+        # Точный файл или точная модель — сильнее общей coverage. Такой шаблон
+        # может содержать только исправленные специалистом строки.
+        exact_document_ok = same_document and strong >= 1
+        exact_model_ok = same_model and strong >= 1 and coverage >= 0.02
+        partial_ok = strong >= max(1, min_anchors // 2) and (same_document or same_model) and coverage >= 0.05
+        regular_ok = strong >= min_anchors and coverage >= min_coverage
+        if exact_document_ok or exact_model_ok or partial_ok or regular_ok:
+            rank = coverage + filename_score * 0.50 + object_score * 0.35 + min(strong, 10) * 0.01
+            if best[0] is None or rank > best[1]:
+                best = (tender, coverage, matches)
 
     if best[0] is None:
         return None, 0.0, {}
@@ -264,6 +318,7 @@ def save_document_to_knowledge(
     filename: str = "",
     tr_type: str | None = None,
     voltage: str | None = None,
+    specialist_name: str | None = None,
 ) -> dict[str, int]:
     """Сохраняет ФИНАЛЬНЫЙ документ инженера. Каждая запись привязана к
     номеру строки, каноническому ключу и физической позиции таблицы."""
@@ -288,6 +343,7 @@ def save_document_to_knowledge(
             filename=filename, object_name=tr_type or "", quantity="",
             delivery_date="", delivery_address="",
             created_at=datetime.now().isoformat(timespec="seconds"),
+            specialist_name=_clean(specialist_name),
         )
         session.add(template)
         session.flush()
@@ -295,6 +351,8 @@ def save_document_to_knowledge(
     elif filename:
         template.filename = filename
         template.object_name = tr_type or template.object_name
+    if specialist_name is not None:
+        template.specialist_name = _clean(specialist_name) or template.specialist_name
 
     existing = {}
     for row in _template_rows(session, template.id):
@@ -408,55 +466,15 @@ def _find_existing_for_save(session: Session, trusted: list[tuple[dict, str]], t
     return None, 0.0, {}
 
 
-def apply_voltage_profile(
-    session: Session,
-    items: list[dict],
-    voltage: str | None,
-) -> int:
-    """Заполняет пустые строки из старого профиля по напряжению.
+def apply_voltage_profile(*args, **kwargs) -> int:
+    """Устаревший API. Технические данные профиля БД больше не используются.
 
-    Профиль используется только после шаблона и только для точного/сильного
-    сопоставления названия поля. Поэтому он не заменяет индивидуальный шаблон.
+    Шаблоны остаются в БД, но parameter_profiles/ProfileParameter не являются
+    источником констант. Первичный технический источник — data_tenders.
     """
-    if not voltage:
-        return 0
-    profiles = session.query(ParameterProfile).filter(
-        ParameterProfile.voltage == str(voltage)
-    ).all()
-    if not profiles:
-        return 0
-    profile = profiles[0]
-    rows = session.query(ProfileParameter).filter_by(profile_id=profile.id).all()
-    if not rows:
-        return 0
-    filled = 0
-    for item in items:
-        if _clean(item.get("current_value")) or _clean(item.get("algorithm_value")):
-            continue
-        best = None
-        best_score = 0.0
-        for row in rows:
-            if not _is_real_value(row.value):
-                continue
-            key_a = _field_key(session, item.get("param_name", ""))
-            key_b = _field_key(session, row.parameter_name or "")
-            if key_a == key_b:
-                score = 1.15
-            else:
-                score = SequenceMatcher(None, norm(item.get("param_name", "")), norm(row.parameter_name or "")).ratio()
-            if score > best_score:
-                best_score, best = score, row
-        if best is not None and best_score >= 0.90:
-            value = _without_star(best.value)
-            if value:
-                item["algorithm_value"] = value
-                item["algorithm_source"] = "DB_PROFILE"
-                item["profile_id"] = profile.id
-                filled += 1
-    return filled
+    return 0
 
-
-def capture_docx_file(session: Session, path: str | Path) -> dict[str, int]:
+def capture_docx_file(session: Session, path: str | Path, specialist_name: str | None = None) -> dict[str, int]:
     """Обучает БЗ только по финальному заполняемому DOCX.
 
     Исходное техническое задание без колонки «Предлагаемое участником
@@ -491,5 +509,6 @@ def capture_docx_file(session: Session, path: str | Path) -> dict[str, int]:
         filename=Path(path).name,
         tr_type=tr_type.name,
         voltage=voltage,
+        specialist_name=specialist_name,
     )
 

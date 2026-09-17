@@ -96,6 +96,7 @@ class Tender(Base):
     delivery_date = Column(String(100), nullable=True)
     delivery_address = Column(String(500), nullable=True)
     created_at = Column(String(50), nullable=True)
+    specialist_name = Column(String(255), nullable=True)
 
 
 class TenderParameter(Base):

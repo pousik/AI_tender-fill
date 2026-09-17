@@ -26,6 +26,7 @@ Dependencies:
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import platform
 import re
@@ -40,18 +41,23 @@ import pytesseract
 from PIL import Image
 from sqlalchemy.orm import Session
 
-from models.tr_type import (
-    AccuracyClass,
-    Climat,
-    IsolColor,
-    IsolType,
-    TrType,
-    TrTypeRule,
-    VoltageClass,
-)
+from models.tr_type import TrType
 from services.gigachat_client import AI_CONFIDENCE_THRESHOLD, ask_json, ask_vision_json, open_client, verify_connection
-from services.knowledge_base import build_knowledge_context, canonicalize_field, get_best_value, resolve_db_field
 from services.data_tenders_knowledge import get_data_tenders_knowledge, _param_key
+
+
+_PROMPT_CONTEXT_CACHE: dict[int, tuple[int, str]] = {}
+
+def _cached_context_json(context: dict) -> str:
+    key = id(context)
+    cached = _PROMPT_CONTEXT_CACHE.get(key)
+    if cached is not None and cached[0] == len(context):
+        return cached[1]
+    value = json.dumps(context, ensure_ascii=False, separators=(",", ":"))
+    if len(_PROMPT_CONTEXT_CACHE) > 8:
+        _PROMPT_CONTEXT_CACHE.pop(next(iter(_PROMPT_CONTEXT_CACHE)))
+    _PROMPT_CONTEXT_CACHE[key] = (len(context), value)
+    return value
 
 # Coordinates are PDF points.  Tender forms in this project use A4 pages.
 LEFT_NUMBER_X = 125
@@ -1275,90 +1281,53 @@ def extract_requirements_from_pdf(layouts: list[PdfPageLayout]) -> dict:
 def match_tr_type_by_pdf_rules(
     layouts: list[PdfPageLayout], session: Session, filename_hint: str = ""
 ) -> tuple[TrType, Optional[int]]:
-    """Подбирает тип по совокупности признаков, не выбирая первую строку БД."""
+    """Определяет паспорт изделия только по data_tenders и PDF-контексту."""
+    data_kb = get_data_tenders_knowledge()
     reqs = extract_requirements_from_pdf(layouts)
-    raw = _norm(" ".join(reqs["raw_text"])).lower()
-
-    # Для сканов напряжение нередко портит OCR. Имя файла является сильным
-    # дополнительным источником: например, ТРГ-110, ТРГ 110, ТРГ_110.
-    filename_norm = _norm(filename_hint).lower()
-    # Если в имени файла есть явная связка ТРГ-110/ТРГ-220, она надёжнее
-    # повреждённого OCR значения внутри скана и должна иметь приоритет.
-    m = re.search(r"(?i)(?:трг|тф|тфн|тт)[\s_-]*(110|220|330|500)", filename_norm)
-    if m:
-        reqs["voltage"] = int(m.group(1))
-
-    rules = session.query(TrTypeRule).all()
-    if not rules:
-        raise ValueError("Таблица правил (TrTypeRule) пуста в БД.")
-
-    candidates = []
-    for rule in rules:
-        tr_type = session.query(TrType).filter_by(id=rule.tr_type_id).first()
-        if not tr_type:
-            continue
-        voltages = [str(v.value) for v in session.query(VoltageClass).filter(VoltageClass.id.in_(rule.voltage_classes or [])).all()]
-        climats = [c.name.lower() for c in session.query(Climat).filter(Climat.id.in_(rule.climats or [])).all()]
-        isol_types = [i.name.lower() for i in session.query(IsolType).filter(IsolType.id.in_(rule.isol_types or [])).all()]
-
-        if reqs["voltage"] is not None and voltages and str(reqs["voltage"]) not in voltages:
-            continue
-        # Климат/изоляция после OCR считаются мягкими признаками. Ошибка
-        # одной буквы в скане не должна исключать правильный тип оборудования.
-        # Жёстким фильтром оставляем только надёжное напряжение.
-
-        score = 0
-        type_name = _norm(tr_type.name).lower()
-        if type_name and type_name in raw:
-            score += 100
-        # Имя исходного PDF часто содержит заводской тип (например, ТРГ-110).
-        # Используем это как сильный, но полностью детерминированный признак.
-        if type_name and type_name in _norm(filename_hint).lower():
-            score += 1000
-        if reqs["voltage"] is not None and str(reqs["voltage"]) in voltages:
-            score += 50
-        if reqs["climat"]:
-            climat = reqs["climat"].lower()
-            if any(climat == c or climat.rstrip("1") == c.rstrip("1") for c in climats):
-                score += 20
-        if reqs["isol_type"]:
-            vals = reqs["isol_type"] if isinstance(reqs["isol_type"], list) else [reqs["isol_type"]]
-            if any(v == "*" or v in isol_types for v in vals):
-                score += 10
-        candidates.append((score, tr_type))
-
-    if not candidates:
-        raise ValueError("Не удалось подобрать тип оборудования по PDF: признаки не соответствуют БД.")
-    candidates.sort(key=lambda x: x[0], reverse=True)
-    best_score = candidates[0][0]
-    best = [x for x in candidates if x[0] == best_score]
-    if len(best) > 1 and best_score == 0:
-        raise ValueError("Не удалось однозначно определить тип оборудования по PDF.")
-    if len(best) > 1:
-        names = ", ".join(x[1].name for x in best)
-        raise ValueError(f"Тип оборудования определен неоднозначно: {names}.")
-    return best[0][1], reqs["voltage"]
+    text_parts = list(reqs.get("raw_text", []))
+    if filename_hint:
+        text_parts.append(filename_hint)
+    text = " ".join(text_parts)
+    model, signature, candidates = data_kb.select_profile(text)
+    if not model:
+        model = data_kb.detect_model(text)
+    if not model and filename_hint:
+        low_name = _norm(filename_hint)
+        for candidate in sorted(data_kb._profiles.keys(), key=len, reverse=True):
+            if _norm(candidate) in low_name:
+                model = candidate
+                break
+    voltage = signature.get("voltage_class") or (data_kb._model_voltage(model) if model else None)
+    if not model and voltage:
+        candidate = f"ТРГ-УЭТМ-{voltage}"
+        if candidate in data_kb._profiles:
+            model = candidate
+    if not model:
+        raise ValueError(f"Не удалось определить профиль PDF. Кандидаты data_tenders: {candidates[:10]}")
+    print(
+        "[PROFILE][PDF] " + str({
+            "product_type": signature.get("product_type"),
+            "model": model,
+            "voltage_class": voltage,
+            "insulation_type": signature.get("insulation_types", []),
+            "insulation_color": signature.get("insulation_colors", []),
+            "candidates": candidates[:10],
+        })
+    )
+    return TrType(name=model), int(float(voltage)) if voltage is not None and str(voltage).replace('.', '', 1).isdigit() else voltage
 
 
 def _db_context(tr_type_obj: TrType, voltage: Optional[int], session: Session) -> dict:
-    rule = session.query(TrTypeRule).filter_by(tr_type_id=tr_type_obj.id).first()
-    if not rule:
-        raise ValueError(f"Для {tr_type_obj.name} нет правила в БД.")
-
-    voltage_str = str(voltage) if voltage is not None else None
-    manufacturer, _ = get_best_value(session, "manufacturer", tr_type_obj.id, voltage_str)
-    brand_name, _ = get_best_value(session, "brand", tr_type_obj.id, voltage_str)
+    """Совместимый API: технический контекст формируется только из data_tenders."""
+    kb = get_data_tenders_knowledge()
+    profile = kb.model_profile(tr_type_obj.name) if tr_type_obj else {}
     return {
-        "manufacturer": manufacturer or "",
-        "brand_name": brand_name or "",
-        "voltages": [str(v.value) for v in session.query(VoltageClass).filter(VoltageClass.id.in_(rule.voltage_classes or [])).all()],
-        "climats": [c.name for c in session.query(Climat).filter(Climat.id.in_(rule.climats or [])).all()],
-        "isol_types": [i.name for i in session.query(IsolType).filter(IsolType.id.in_(rule.isol_types or [])).all()],
-        "isol_colors": [c.name for c in session.query(IsolColor).filter(IsolColor.id.in_(rule.isol_colors or [])).all()],
-        "measuring_accs": [a.name for a in session.query(AccuracyClass).filter(AccuracyClass.id.in_(rule.accuracy_classes or []), AccuracyClass.is_measuring.is_(True)).all()],
-        "protective_accs": [a.name for a in session.query(AccuracyClass).filter(AccuracyClass.id.in_(rule.accuracy_classes or []), AccuracyClass.is_measuring.is_(False)).all()],
+        "source": "data_tenders",
+        "manufacturer": "",
+        "brand_name": "",
+        "voltages": [str(profile.get("voltage"))] if profile.get("voltage") else [],
+        "parameters": profile.get("parameters", {}),
     }
-
 
 def _is_trivial_row(item: "PdfItem") -> bool:
     """Строки-заголовки разделов / шум OCR, для которых пустой ответ — норма.
@@ -1388,69 +1357,38 @@ def _algorithm_fill_pdf(
     data_kb=None,
     document_text: str = "",
 ) -> None:
-    """Первый (детерминированный) проход: расширяемая БЗ -> легаси-эвристики.
-
-    Мутирует каждый элемент `items`, добавляя algorithm_value/algorithm_source,
-    точно так же, как это делает DOCX-пайплайн (services.search_docx_AI).
-    """
-    voltage_str = str(voltage) if voltage else None
-    # Не вычисляем модель по полному тексту заново для каждой строки.
-    data_model = data_kb.detect_model(document_text, items) if data_kb is not None else None
-    effective_model = data_model or (tr_type.name if tr_type and "ТРГ-УЭТМ" in str(tr_type.name).upper() else None)
+    """Первичный проход по единому паспорту data_tenders."""
+    data_kb = data_kb or get_data_tenders_knowledge()
+    model = tr_type.name if tr_type else data_kb.detect_model(document_text, items)
+    signature = dict(items[0].get("_product_signature") or {}) if items else {}
+    signature.update({"model": model, "voltage_class": str(voltage) if voltage is not None else signature.get("voltage_class")})
     for item in items:
-        # При активном data_tenders не делаем SQL/fuzzy-поиск FieldRule на каждой строке.
-        db_key = _param_key(item["param_name"]) if data_kb is not None else canonicalize_field(session, item["param_name"])
-        item["db_key"] = db_key
-        value, source = (None, None)
-        if data_kb is not None:
-            value, source, _score = data_kb.get_constant(
-                item["param_name"],
-                text_context=document_text,
-                model=effective_model,
-                voltage=voltage_str,
-                required_val=item.get("required_val", ""),
-            )
-        else:
-            value, source = None, None
-
-        # Сложные характеристики не фиксируем вслепую на первом проходе.
-        # Передаем найденный кандидат второму уровню (AI), где учитываются
-        # марка, изоляция, единицы и взаимосвязи параметров.
+        pkey = _param_key(item.get("param_name", ""))
+        item["db_key"] = pkey
+        value, source, score = data_kb.lookup(
+            item.get("param_name", ""),
+            model=model,
+            voltage=str(voltage) if voltage is not None else None,
+            required_val=item.get("required_val", ""),
+            profile_signature=signature,
+        )
         candidate = str(value or "").strip()
-        param_lower = str(item.get("param_name", "") or "").lower()
         required = str(item.get("required_val", "") or "").strip()
+        param = _norm(item.get("param_name", ""))
         ambiguous = bool(
             candidate and required == "*" and
             (
-                "габарит" in param_lower
-                or "масса трансформатора" in param_lower
-                or "масса масла" in param_lower
-                or "климатическ" in param_lower
-                or len(re.findall(r"\d+(?:[.,]\d+)?", candidate)) > 1
+                len(re.findall(r"\d+(?:[.,]\d+)?", candidate)) > 1
                 or re.search(r"\b(?:или|/|;|,)\b", candidate, flags=re.IGNORECASE)
+                or any(x in param for x in ("габарит", "масса трансформатора", "масса масла", "климатическ"))
             )
         )
+        item["_product_signature"] = signature
         item["algorithm_candidate"] = candidate
         item["algorithm_candidate_source"] = source or "NONE"
-        if ambiguous:
-            value, source = "", "NONE"
-        if value is None:
-            fallback = _deterministic_answer(
-                PdfItem(
-                    id=item["id"],
-                    page=0,
-                    number=item["number"],
-                    param_name=item["param_name"],
-                    required_val=item["required_val"],
-                    rect=pymupdf.Rect(0, 0, 0, 0),
-                ),
-                legacy_context,
-                voltage,
-            )
-            if fallback:
-                value, source = fallback, "HEURISTIC"
-        item["algorithm_value"] = value or ""
-        item["algorithm_source"] = source or "NONE"
+        item["algorithm_score"] = score
+        item["algorithm_value"] = "" if ambiguous else candidate
+        item["algorithm_source"] = "NONE" if ambiguous else (source or "NONE")
 
 
 def _build_pdf_ai_prompt(
@@ -1475,10 +1413,10 @@ def _build_pdf_ai_prompt(
         "между Vision и Tesseract доверяй связному Vision-контексту, если он согласуется с соседними "
         "строками, единицами и типом изделия. Не считай отдельную OCR-ошибку новым фактом.\n\n"
         f"ПОЛНЫЙ OCR/ТЕКСТ ДОКУМЕНТА:\n{full_text[:30000]}\n\n"
-        f"ПОЛНЫЙ КОРПУС data_tenders (все эталонные файлы, таблицы и OCR изображений):\n{json.dumps(data_tenders_context, ensure_ascii=False, indent=2)}\n\n"
+        f"ПОЛНЫЙ КОРПУС data_tenders (все эталонные файлы, таблицы и OCR изображений):\n{_cached_context_json(data_tenders_context)}\n\n"
         f"ВЕСЬ ДОКУМЕНТ (результат первого алгоритма по каждой строке):\n"
-        f"{json.dumps(global_summary, ensure_ascii=False, indent=2)}\n\n"
-        f"СТРОКИ ДЛЯ ОТВЕТА:\n{json.dumps(chunk, ensure_ascii=False, indent=2)}\n\n"
+        f"{json.dumps(global_summary, ensure_ascii=False, separators=(",", ":"))}\n\n"
+        f"СТРОКИ ДЛЯ ОТВЕТА:\n{json.dumps(chunk, ensure_ascii=False, separators=(",", ":"))}\n\n"
         "ПРАВИЛА:\n"
         "1) Изготовитель, заводской тип и марка сначала сверяются с data_tenders. Заполняй их даже при * слева; "
         'эти значения никогда не помечаются звёздочками.\n'
@@ -1504,6 +1442,51 @@ def _build_pdf_ai_prompt(
     )
 
 
+def _adaptive_pdf_chunk_size(items: list[dict], global_summary: list[dict], kb_context: dict, full_text: str, filename: str, max_prompt_chars: int, hard_max: int) -> int:
+    n = len(items)
+    if n <= 1:
+        return n
+    lo, hi, best = 1, min(n, hard_max), 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        try:
+            probe = _build_pdf_ai_prompt(items[:mid], global_summary, kb_context, full_text=full_text, filename=filename)
+            size = len(probe)
+        except Exception:
+            size = max_prompt_chars + 1
+        if size <= max_prompt_chars:
+            best = mid
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return max(1, best)
+
+
+_PDF_AI_RESPONSE_CACHE: dict[str, dict[str, dict]] = {}
+
+def _compact_pdf_kb_context(context: dict | None) -> dict:
+    if not isinstance(context, dict):
+        return {}
+    out = {
+        "source": context.get("source", "data_tenders"),
+        "selection": context.get("selection", {}),
+        "model_profiles": context.get("model_profiles", {}),
+        "files": [],
+        "images": context.get("images", []),
+        "selection_rule": context.get("selection_rule", ""),
+    }
+    for f in context.get("files", []) or []:
+        item = {"file": f.get("file", "")}
+        if f.get("tables"):
+            item["tables"] = f["tables"]
+        if f.get("error"):
+            item["error"] = f["error"]
+        out["files"].append(item)
+    return out
+
+def _pdf_ai_cache_key(prompt: str) -> str:
+    return hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+
 def _pdf_ai_review(
     client,
     items: list[dict],
@@ -1513,8 +1496,13 @@ def _pdf_ai_review(
     filename: str = "",
     chunk_size: int | None = None,
 ) -> dict[str, dict]:
-    """Прогоняет весь документ через GigaChat порциями, но с полным контекстом в каждом запросе."""
-    data_tenders_context = kb_context
+    """Прогоняет только незакрытые строки через GigaChat, сохраняя весь контекст документа."""
+    data_tenders_context = _compact_pdf_kb_context(kb_context)
+    # Все строки остаются в global_summary для контекста зависимостей, но
+    # в качестве targets отправляем только реально незаполненные поля.
+    pending = [it for it in items if not str(it.get("algorithm_value", "") or "").strip()]
+    if not pending:
+        return {}
     global_summary = [
         {
             "id": it["id"],
@@ -1542,17 +1530,31 @@ def _pdf_ai_review(
                 "param_name": it["param_name"], "required_val": it["required_val"],
                 "algorithm_value": it["algorithm_value"], "algorithm_source": it["algorithm_source"],
             }
-            for it in items
+            for it in pending
         ]
-        whole_prompt = _build_pdf_ai_prompt(whole_chunk, global_summary, kb_context, full_text=full_text, filename=filename)
+        whole_prompt = _build_pdf_ai_prompt(whole_chunk, global_summary, data_tenders_context, full_text=full_text, filename=filename)
         max_prompt_chars = int(os.getenv("TENDER_AI_MAX_PROMPT_CHARS", "240000"))
         if len(whole_prompt) <= max_prompt_chars:
+            cache_key = _pdf_ai_cache_key(whole_prompt)
+            cached = _PDF_AI_RESPONSE_CACHE.get(cache_key)
+            if cached is not None:
+                valid_ids = {x["id"] for x in items}
+                return {k: v for k, v in cached.items() if k in valid_ids and isinstance(v, dict)}
             part = ask_json(client, whole_prompt)
             if isinstance(part, dict):
                 valid_ids = {x["id"] for x in items}
-                return {k: v for k, v in part.items() if k in valid_ids and isinstance(v, dict)}
+                cleaned = {k: v for k, v in part.items() if k in valid_ids and isinstance(v, dict)}
+                if len(_PDF_AI_RESPONSE_CACHE) >= 16:
+                    _PDF_AI_RESPONSE_CACHE.pop(next(iter(_PDF_AI_RESPONSE_CACHE)))
+                _PDF_AI_RESPONSE_CACHE[cache_key] = cleaned
+                return cleaned
     except Exception as exc:
         print(f"[GigaChat][PDF] единый запрос не прошёл, переходим на чанки: {exc}")
+
+    chunk_size = _adaptive_pdf_chunk_size(
+        items, global_summary, data_tenders_context, full_text, filename,
+        max_prompt_chars, max(chunk_size, 128),
+    )
 
     for start in range(0, len(items), chunk_size):
         chunk = [
@@ -1566,7 +1568,7 @@ def _pdf_ai_review(
             }
             for it in items[start : start + chunk_size]
         ]
-        prompt = _build_pdf_ai_prompt(chunk, global_summary, kb_context, full_text=full_text, filename=filename)
+        prompt = _build_pdf_ai_prompt(chunk, global_summary, data_tenders_context, full_text=full_text, filename=filename)
         try:
             part = ask_json(client, prompt)
             chunk_ids = {c["id"] for c in chunk}
@@ -1616,9 +1618,10 @@ def _merge_algorithm_and_ai_pdf(item: dict, aid: dict) -> tuple[str, str, str, f
         strip = lambda x: re.sub(r"(?i)(кв|ка|а|в)$", "", x)
         return a == b or strip(a) == strip(b)
 
-    # БД всегда побеждает AI, даже если AI назвал другую допустимую константу.
-    if alg_value and alg_is_db:
-        return alg_value, "DB", "", confidence, reason
+    # Сохранённый специалистом шаблон всегда побеждает AI.
+    alg_is_template = alg_source == "DB_TEMPLATE"
+    if alg_value and alg_is_template:
+        return alg_value, "DB_TEMPLATE", "", confidence, reason
 
     if alg_value:
         if ai_value and equivalent(ai_value, alg_value):
@@ -1840,13 +1843,14 @@ def process_pdf_requirements(
     """
     layouts, full_text = extract_pdf_items(pdf_path, use_ocr=use_ocr)
     tr_type, detected_voltage = match_tr_type_by_pdf_rules(layouts, session, Path(pdf_path).name)
-    legacy_context = {}
     data_kb = get_data_tenders_knowledge()
-    kb_context = data_kb.build_full_context(
-        model=data_kb.detect_model(full_text) or None,
-        voltage=str(detected_voltage) if detected_voltage else data_kb.detect_voltage(full_text),
-        include_images=True,
-    )
+    # Паспорт изделия строим один раз до заполнения строк.
+    profile_text = full_text + " " + Path(pdf_path).name
+    _selected_model, _product_signature, _profile_candidates = data_kb.select_profile(profile_text, [
+        {"param_name": str(x.param_name), "required_val": str(x.required_val), "current_value": str(getattr(x, "existing_answer", ""))}
+        for layout in layouts for x in layout.items
+    ])
+    kb_context = {}
 
     items: list[dict] = []
     for layout in layouts:
@@ -1858,24 +1862,30 @@ def process_pdf_requirements(
                     "number": item.number,
                     "param_name": item.param_name,
                     "required_val": item.required_val,
+                    "_product_signature": dict(_product_signature or {"model": tr_type.name, "voltage_class": str(detected_voltage) if detected_voltage is not None else None}),
                 }
             )
 
     # 1) Алгоритмический проход: расширяемая БЗ -> легаси-справочники -> эвристики.
     _algorithm_fill_pdf(
-        session, items, tr_type, detected_voltage, legacy_context,
+        session, items, tr_type, detected_voltage, {},
         data_kb=data_kb, document_text=full_text,
     )
 
-    # 2) AI-аудит с полным контекстом документа. Для офлайн-диагностики
-    # можно выставить TENDER_SKIP_AI=1: алгоритм и fallback продолжают работать.
-    if os.getenv("TENDER_SKIP_AI", "0") == "1":
+    # AI нужен только если после первичного data_tenders-прохода остались поля.
+    pending_ai = any(not it.get("algorithm_value") for it in items)
+    if os.getenv("TENDER_SKIP_AI", "0") == "1" or not pending_ai:
         print("[GigaChat] AI-проход отключен: TENDER_SKIP_AI=1")
         audit = {}
     else:
         with open_client() as client:
             if os.getenv("TENDER_VERIFY_GIGACHAT", "0") == "1":
                 verify_connection(client)
+            kb_context = data_kb.build_full_context(
+                model=tr_type.name if tr_type else data_kb.detect_model(full_text),
+                voltage=str(detected_voltage) if detected_voltage else None,
+                include_images=True,
+            )
             audit = _pdf_ai_review(client, items, kb_context, full_text=full_text, filename=Path(pdf_path).name)
 
     # 3) Слияние алгоритма и AI с порогом уверенности + маркировка "**".
@@ -1900,19 +1910,6 @@ def process_pdf_requirements(
         # резерв перед совсем безопасным эвристическим fallback-ом.
         if not value and pdf_item.existing_answer:
             value, source, mark = _clean_pdf_value(pdf_item.existing_answer), "EXISTING_ANSWER", ""
-        # Если AI промолчал, переносим явное требование из левой колонки.
-        # Это безопаснее выдуманного ответа и выполняет правило: AI/контекстное
-        # значение отмечается ** (или * при уже отмеченном требовании).
-        if not value:
-            requirement_value = _fallback_from_requirement(pdf_item.required_val)
-            if requirement_value:
-                value, source, mark = requirement_value, "REQUIREMENT", _pdf_ai_mark(pdf_item.required_val)
-
-        if not value:
-            fallback = _deterministic_answer(pdf_item, legacy_context, detected_voltage)
-            if fallback:
-                value, source, mark = fallback, "FALLBACK_ECHO", ""
-
         if not value and not _is_trivial_row(pdf_item):
             # Поле остается пустым: никаких текстовых заглушек.
             unresolved.append(pdf_item.id)
@@ -1939,7 +1936,7 @@ def process_pdf_requirements(
                 "mark": mark,
                 "confidence": confidence,
                 "reason": reason,
-                "decision": ("DB_PRIORITY" if source == "DB" else "AI_OVERRIDE" if source == "AI_CONTEXT" else "ALGORITHM_OR_FALLBACK"),
+                "decision": ("DATA_TENDERS_PRIORITY" if source == "DB" else "AI_OVERRIDE" if source == "AI_CONTEXT" else "ALGORITHM_OR_FALLBACK"),
             }
         )
 
@@ -1967,7 +1964,9 @@ def process_pdf_requirements(
                 "ai_marked_rows": marked,
                 "unresolved_rows": unresolved,
                 "rules": {
-                    "DB_is_constant_source": True,
+                    "DB_is_constant_source": False,
+                    "DB_role": "templates_only",
+                    "DATA_TENDERS_is_constant_source": True,
                     "AI_context_mark": "** (or one * when required value already contains *)",
                     "unknown_placeholders": "never",
                     "star_does_not_block_context_fill": True,

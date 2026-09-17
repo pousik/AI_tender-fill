@@ -4,12 +4,12 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QPushButton, QVBoxLayout, QWidget, QInputDialog
 
 from main import Session, process_document
 from bootstrap import bootstrap
 from services.document_tracker import DocumentTracker
-from services.pdf_word_edit import prepare_pdf_for_word_editing
+from services.pdf_word_edit import prepare_pdf_for_word_editing, set_docx_header_specialist
 
 
 class MainWindow(QWidget):
@@ -18,6 +18,7 @@ class MainWindow(QWidget):
         self.file_name: str | None = None
         self.output_file: Path | None = None
         self.processed = False
+        self.specialist_name: str | None = None
 
         self.setWindowTitle("Автозаполнение тендерного документа")
         self.resize(420, 320)
@@ -64,6 +65,17 @@ class MainWindow(QWidget):
             print("Сначала выберите файл!")
             return
 
+        specialist, ok = QInputDialog.getText(
+            self,
+            "Специалист",
+            "Введите ФИО специалиста, заполняющего тендер:",
+            text=self.specialist_name or os.getenv("SPECIALIST_NAME", ""),
+        )
+        if not ok or not specialist.strip():
+            print("Заполнение отменено: ФИО специалиста не указано.")
+            return
+        self.specialist_name = specialist.strip()
+
         input_doc = Path(self.file_name)
         suffix = ""
         if(input_doc.suffix.lower() in (".doc", ".docx")):
@@ -85,19 +97,35 @@ class MainWindow(QWidget):
                 print(result)
 
                 if self.output_file.suffix.lower() == ".pdf":
-                    # Вариант 2: инженер редактирует результат в Microsoft Word.
-                    # После закрытия Word tracker конвертирует изменённый DOCX
-                    # обратно в исходный PDF и записывает исправления в БЗ.
+                    # PDF -> DOCX: ФИО записываем ДО открытия Word.
                     editable = self.output_file.with_name(
                         self.output_file.stem + "_для_редактирования.docx"
                     )
                     editable = prepare_pdf_for_word_editing(self.output_file, editable)
-                    print(f"[PDF/WORD] Создана редактируемая копия: {editable}")
-                    self.tracker.watch(editable, pdf_target=self.output_file)
+                    set_docx_header_specialist(editable, self.specialist_name)
+                    print(
+                        f"[PDF/WORD] Создана редактируемая копия: {editable}; "
+                        f"специалист: {self.specialist_name}"
+                    )
+                    self.tracker.watch(
+                        editable,
+                        pdf_target=self.output_file,
+                        specialist_name=self.specialist_name,
+                    )
                     QDesktopServices.openUrl(QUrl.fromLocalFile(str(editable)))
 
                 elif self.output_file.suffix.lower() == ".docx":
-                    self.tracker.watch(self.output_file)
+                    # ФИО записываем ДО открытия Word, а после закрытия tracker
+                    # повторяет синхронизацию и сохраняет specialist_name в БД.
+                    set_docx_header_specialist(self.output_file, self.specialist_name)
+                    print(
+                        f"[KB] ФИО специалиста добавлено в новый DOCX до открытия Word: "
+                        f"{self.specialist_name}"
+                    )
+                    self.tracker.watch(
+                        self.output_file,
+                        specialist_name=self.specialist_name,
+                    )
                     QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.output_file)))
                 else:
                     QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.output_file)))

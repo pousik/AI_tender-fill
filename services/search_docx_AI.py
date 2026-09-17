@@ -2,9 +2,8 @@
 
 Пайплайн:
 1. Алгоритм: для каждой строки ищем канонический ключ БЗ (FieldRule) и
-   берем значение из расширяемой базы знаний (KnowledgeEntry) или из
-   исторических справочников (TrTypeRule/VoltageClass/...). Такие значения
-   — константы, они не помечаются.
+   берем значение только из файлового источника data_tenders. Значения
+   подтвержденные эталонными документами — константы и не помечаются.
 2. AI-аудит: GigaChat получает ВЕСЬ контекст документа (все параграфы, все
    таблицы, результат первого прохода, применимую БЗ) и перепроверяет
    каждую строку.
@@ -20,7 +19,9 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
+import time
 import re
 import uuid
 from copy import deepcopy
@@ -30,9 +31,7 @@ from typing import Any
 from docx import Document
 from sqlalchemy.orm import Session
 
-from models.tr_type import (
-    AccuracyClass, Climat, IsolColor, IsolType, KnowledgeEntry, TrType, TrTypeRule, VoltageClass
-)
+from models.tr_type import TrType
 from services.gigachat_client import (
     AI_CONFIDENCE_THRESHOLD,
     ask_json,
@@ -40,9 +39,51 @@ from services.gigachat_client import (
     open_client,
     verify_connection,
 )
-from services.knowledge_base import build_knowledge_context, canonicalize_field, norm, resolve_db_field
-from services.template_knowledge import find_best_template, apply_template, apply_voltage_profile, save_document_to_knowledge
-from services.data_tenders_knowledge import get_data_tenders_knowledge, _param_key
+from services.data_tenders_knowledge import get_data_tenders_knowledge, _param_key, _norm as norm
+from services.template_knowledge import find_best_template, apply_template, save_document_to_knowledge
+
+
+_PROMPT_CONTEXT_CACHE: dict[int, tuple[int, str]] = {}
+_AI_RESPONSE_CACHE: dict[str, dict[str, dict]] = {}
+
+def _cached_context_json(context: dict) -> str:
+    key = id(context)
+    cached = _PROMPT_CONTEXT_CACHE.get(key)
+    if cached is not None and cached[0] == len(context):
+        return cached[1]
+    value = json.dumps(context, ensure_ascii=False, separators=(",", ":"))
+    if len(_PROMPT_CONTEXT_CACHE) > 8:
+        _PROMPT_CONTEXT_CACHE.pop(next(iter(_PROMPT_CONTEXT_CACHE)))
+    _PROMPT_CONTEXT_CACHE[key] = (len(context), value)
+    return value
+
+
+def _compact_data_tenders_context(context: dict | None) -> dict:
+    """Сохраняет все технические факты, но убирает структурные дубли перед AI."""
+    if not isinstance(context, dict):
+        return {}
+    out = {
+        "source": context.get("source", "data_tenders"),
+        "selection": context.get("selection", {}),
+        "model_profiles": context.get("model_profiles", {}),
+        "files": [],
+        "images": context.get("images", []),
+        "selection_rule": context.get("selection_rule", ""),
+    }
+    # В files удаляем дублирующий полный список images: полный image-index
+    # уже находится в out["images"]. Таблицы и ошибки файлов сохраняются.
+    for f in context.get("files", []) or []:
+        item = {"file": f.get("file", "")}
+        if f.get("tables"):
+            item["tables"] = f["tables"]
+        if f.get("error"):
+            item["error"] = f["error"]
+        out["files"].append(item)
+    return out
+
+
+def _ai_cache_key(prompt: str) -> str:
+    return hashlib.sha256(prompt.encode("utf-8")).hexdigest()
 
 __all__ = ["process_docx_requirements", "check_gigachat_connection"]
 
@@ -332,140 +373,113 @@ def extract_doc_items(doc: Document) -> tuple[list[dict], dict[str, Any]]:
     }
 
 def _determine_type(session: Session, items: list[dict], document_context: dict[str, Any] | None = None) -> tuple[TrType, str | None]:
-    """Определяет тип только при наличии достаточного основания.
-
-    Старый ``rstrip('.0')`` был ошибочным: для строки ``110`` он давал ``11``.
-    Здесь напряжение сравнивается численно, а при нескольких подходящих типах
-    неоднозначность не скрывается выбором первой строки БД.
-    """
-    parts = [
-        f"{x.get('param_name', '')} {x.get('required_val', '')}"
-        for x in items
-    ]
+    """Строит паспорт изделия только из data_tenders/документа."""
+    data_kb = get_data_tenders_knowledge()
+    parts = [f"{x.get('param_name', '')} {x.get('required_val', '')} {x.get('current_value', '')}" for x in items]
     if document_context:
-        parts.extend(document_context.get("paragraphs", []))
-        for table in document_context.get("tables", []):
-            for row in table:
-                parts.extend(row.get("cells", []))
-    text = " ".join(parts).lower()
-    voltage = None
+        parts.extend(document_context.get("paragraphs", []) or [])
+        for table in (document_context.get("tables", []) or []):
+            for row in (table or []):
+                parts.append(row.get("cells", []) or [])
+    flat = []
+    for x in parts:
+        flat.extend(x if isinstance(x, list) else [x])
+    text = " ".join(map(str, flat))
+    model, signature, candidates = data_kb.select_profile(text, items)
+    if not model:
+        model = data_kb.detect_model(text, items)
+    if model and not candidates:
+        candidates = [model]
+    voltage = signature.get("voltage_class") or (data_kb._model_voltage(model) if model else None)
+    if not model and voltage:
+        model = f"ТРГ-УЭТМ-{voltage}"
+    if not model:
+        raise ValueError(f"Не удалось определить профиль изделия. Кандидаты data_tenders: {candidates[:10]}")
+    # Для модели ТРГ-УЭТМ тип изделия определяется однозначно от самой модели.
+    signature = dict(signature or {})
+    signature["model"] = model
+    signature["voltage_class"] = signature.get("voltage_class") or voltage
+    signature["insulation_types"] = list(signature.get("insulation_types") or [])
+    signature["insulation_colors"] = list(signature.get("insulation_colors") or [])
+    if norm(model).startswith("трг-уэтм"):
+        signature["product_type"] = "ТРГ-УЭТМ"
+    print(
+        "[PROFILE] "+str({
+            'product_type': signature.get('product_type'),
+            'model': model,
+            'voltage_class': signature.get('voltage_class') or voltage,
+            'insulation_type': signature.get('insulation_type'),
+            'insulation_color': signature.get('insulation_color'),
+            'candidates': candidates[:10],
+        })
+    )
+    # Сохраняем паспорт в items для последующих этапов, не меняя публичный контракт.
     for item in items:
-        p = norm(item.get("param_name", ""))
-        if "номинальн" in p and "напряж" in p:
-            m = re.search(r"\d+(?:[,.]\d+)?", str(item.get("required_val", "")))
-            if m:
-                voltage = m.group(0).replace(",", ".")
-                break
-
-    def voltage_equal(a: str, b: str) -> bool:
-        try:
-            return float(a.replace(",", ".")) == float(b.replace(",", "."))
-        except (ValueError, AttributeError):
-            return norm(a) == norm(b)
-
-    candidates = []
-    rules = session.query(TrTypeRule).all()
-    for rule in rules:
-        tr = session.query(TrType).filter_by(id=rule.tr_type_id).first()
-        if not tr:
-            continue
-        score = 0
-        if norm(tr.name) and norm(tr.name) in norm(text):
-            score += 100
-        volts = {
-            str(x.value)
-            for x in session.query(VoltageClass)
-            .filter(VoltageClass.id.in_(rule.voltage_classes or []))
-            .all()
-        }
-        if voltage and any(voltage_equal(voltage, v) for v in volts):
-            score += 50
-        candidates.append((score, tr, rule))
-
-    if voltage is None:
-        # Напряжение может находиться в заголовке документа, а не в строке ТЗ.
-        m = re.search(r"(?i)\b(\d+(?:[,.]\d+)?)\s*(?:кв|kv)\b", text)
-        if m:
-            voltage = m.group(1)
-
-    # Пересчитать кандидатов после извлечения напряжения из общего контекста.
-    if voltage is not None:
-        rescored = []
-        for _, tr, rule in candidates:
-            score = 0
-            if norm(tr.name) and norm(tr.name) in norm(text):
-                score += 100
-            volts = {
-                str(x.value)
-                for x in session.query(VoltageClass)
-                .filter(VoltageClass.id.in_(rule.voltage_classes or []))
-                .all()
-            }
-            if any(voltage_equal(voltage, v) for v in volts):
-                score += 50
-            rescored.append((score, tr, rule))
-        candidates = rescored
-
-    if not candidates:
-        raise ValueError("Не удалось определить тип трансформатора: в БД нет правил.")
-
-    candidates.sort(key=lambda x: x[0], reverse=True)
-    best_score = candidates[0][0]
-    best = [x for x in candidates if x[0] == best_score]
-    if best_score <= 0 and len(candidates) > 1:
-        raise ValueError(
-            "Не удалось однозначно определить тип трансформатора: "
-            "в документе нет названия типа или распознанного напряжения."
-        )
-    if len(best) > 1:
-        names = ", ".join(x[1].name for x in best)
-        raise ValueError(f"Тип трансформатора определен неоднозначно: {names}.")
-    return best[0][1], voltage
+        item['_product_signature'] = signature
+        item['_product_model'] = model
+    return TrType(name=model), voltage
 
 
 def _algorithm_fill(session: Session, items: list[dict], tr_type: TrType, voltage: str | None, data_kb=None, document_text: str = "") -> list[dict]:
+    """Первичный детерминированный проход по профилю data_tenders.
+
+    Здесь нет перебора всех технических источников БД. Сначала фиксируется паспорт
+    изделия, затем каждое поле ищется только внутри выбранного профиля.
+    """
+    data_kb = data_kb or get_data_tenders_knowledge()
+    model = tr_type.name if tr_type else None
+    signature = {}
+    if items:
+        signature = dict(items[0].get('_product_signature') or {})
+    signature.update({'model': model, 'voltage_class': voltage or signature.get('voltage_class')})
+    if not signature.get('product_type'):
+        signature['product_type'] = 'ТРГ-УЭТМ' if model and norm(model).startswith('трг-уэтм') else signature.get('product_type')
+
+    # Профиль загружается один раз. Это позволяет напрямую брать реквизиты,
+    # которые в data_tenders находятся вне обычной строки параметров.
+    try:
+        selected_profile = data_kb.model_profile(model) if model else {}
+    except Exception:
+        selected_profile = {}
+    profile_manufacturer = str(selected_profile.get("manufacturer") or "").strip()
     result = []
-    # Модель и напряжение определяем один раз на весь документ. Ранее
-    # detect_model() повторно проходил весь контекст для каждой строки.
-    data_model = data_kb.detect_model(document_text, items) if data_kb is not None else None
-    effective_model = data_model or (tr_type.name if tr_type and "ТРГ-УЭТМ" in str(tr_type.name).upper() else None)
-    effective_voltage = voltage or (data_kb.detect_voltage(document_text, items) if data_kb is not None else None)
     for item in items:
-        # При активном data_tenders не делаем SQL/fuzzy-поиск FieldRule на каждой строке.
-        db_key = _param_key(item["param_name"]) if data_kb is not None else canonicalize_field(session, item["param_name"])
-        param_text = norm(item.get("param_name", ""))
-        item["db_key"] = db_key
-        value, source = (None, None)
+        pkey = _param_key(item["param_name"])
+        item["db_key"] = pkey
+        param_lower = norm(item.get("param_name", ""))
 
-        # Изготовитель и заводской тип/марка — обязательные константы проекта.
-        # Для них дополнительно используем распознавание по названию строки,
-        # чтобы даже при неидеальном совпадении FieldRule значение не потерялось.
-        is_manufacturer = (
-            re.match(r"^(?:изготовител(?:ь|я|ем)?|производител(?:ь|я|ем)?)\b", param_text) is not None
-            or "завод-изготовитель" in param_text
-        )
-        is_brand = (
-            "заводской тип" in param_text
-            or "заводской тип марка" in param_text
-            or ("тип" in param_text and "марка" in param_text)
-        )
-        # Константы берем только из data_tenders. SQLite БД в этом проходе
-        # намеренно не используется. Составные значения передаются AI как
-        # candidate для второго уровня и не фиксируются вслепую.
-        if data_kb is not None:
-            value, source, _score = data_kb.get_constant(
-                item["param_name"],
-                text_context=document_text,
-                model=effective_model,
-                voltage=effective_voltage,
-                required_val=item.get("required_val", ""),
-            )
+        # Простые реквизиты изделия не отправляем в AI: они определяются
+        # непосредственно профилем data_tenders.
+        candidate_direct = ""
+        direct_source = ""
+        if not item.get("current_value"):
+            if any(x in param_lower for x in ("изготовител", "производител", "предприятие-изготовитель")):
+                if profile_manufacturer:
+                    candidate_direct = profile_manufacturer
+                    direct_source = "DATA_TENDERS:profile.manufacturer"
+            elif "марка" in param_lower or "тип изделия" in param_lower:
+                if model:
+                    candidate_direct = model
+                    direct_source = "DATA_TENDERS:profile.model"
+
+        if candidate_direct:
+            value, source, score = candidate_direct, direct_source, 1.30
         else:
-            value, source = None, None
-
+            value, source, score = data_kb.lookup(
+            item["param_name"],
+            model=model,
+            voltage=voltage,
+            required_val=item.get("required_val", ""),
+            profile_signature=signature,
+        )
         candidate = str(value or "").strip()
         required = str(item.get("required_val", "") or "").strip()
-        param_lower = param_text
+        if not candidate and not profile_manufacturer and any(x in param_lower for x in ("изготовитель", "производитель")):
+            value, source, score = data_kb.lookup(
+                "Изготовитель", model=model, voltage=voltage,
+                required_val="*", profile_signature=signature, min_score=0.88,
+            )
+            candidate = str(value or "").strip()
         ambiguous = bool(
             candidate and required == "*" and
             (
@@ -479,6 +493,7 @@ def _algorithm_fill(session: Session, items: list[dict], tr_type: TrType, voltag
         )
         item["algorithm_candidate"] = candidate
         item["algorithm_candidate_source"] = source or "NONE"
+        item["algorithm_score"] = score
         item["algorithm_value"] = "" if ambiguous else candidate
         item["algorithm_source"] = "NONE" if ambiguous else (source or "NONE")
         result.append(item.copy())
@@ -574,66 +589,30 @@ def _values_equivalent(left: str, right: str) -> bool:
     return normalize(left) == normalize(right)
 
 
-def _legacy_db_values(session: Session, tr_type: TrType, key: str) -> set[str]:
-    """Возвращает все допустимые константы старых справочников БД."""
-    rule = session.query(TrTypeRule).filter_by(tr_type_id=tr_type.id).first()
-    if not rule:
-        return set()
-
-    def names(model, ids):
-        column = getattr(model, "name", None) or getattr(model, "value", None)
-        if column is None:
-            return []
-        return [str(x[0]) for x in session.query(column).filter(model.id.in_(ids or [])).all()]
-
-    if key == "nominal_voltage":
-        return set(names(VoltageClass, rule.voltage_classes))
-    if key == "climate":
-        return set(names(Climat, rule.climats))
-    if key in {"internal_insulation", "external_insulation"}:
-        return set(names(IsolType, rule.isol_types))
-    if key == "external_insulation_color":
-        return set(names(IsolColor, rule.isol_colors))
-    if key == "accuracy_class":
-        return set(names(AccuracyClass, rule.accuracy_classes))
-    return set()
-
-
-def _is_known_db_value(session: Session, item: dict, value: str, tr_type: TrType, voltage: str | None) -> bool:
-    """Проверяет, есть ли значение среди применимых констант БД.
-
-    Проверка намеренно шире canonical field строки: если AI вывел, например,
-    0,2 / 0,2S / 10PR / 220 / У1, а такое значение уже есть в БД текущего
-    проекта, маркер ** ставить нельзя.
-    """
+def _is_known_data_tenders_value(data_kb, item: dict, value: str, model: str | None, voltage: str | None) -> bool:
+    """Проверяет значение только по файловому источнику data_tenders."""
     value = _clean_ai_value(value)
     if not value:
         return False
-
-    keys = []
-    if item.get("db_key"):
-        keys.append(item["db_key"])
-    keys.extend([
-        "nominal_voltage", "climate", "internal_insulation",
-        "external_insulation", "external_insulation_color", "accuracy_class",
-    ])
-
-    # KnowledgeEntry — расширяемая БД проекта.
-    for row in session.query(KnowledgeEntry).filter_by(active=True).all():
-        if row.tr_type_id not in (None, tr_type.id):
-            continue
-        if row.voltage and (not voltage or str(row.voltage) != str(voltage)):
-            continue
-        if row.value and _values_equivalent(value, str(row.value)):
-            return True
-
-    # Legacy-справочники.
-    for key in dict.fromkeys(keys):
-        for known in _legacy_db_values(session, tr_type, key):
-            if known and _values_equivalent(value, known):
+    p = item.get("param_name", "")
+    found, _, _ = data_kb.lookup(
+        p, model=model, voltage=voltage, required_val=value, min_score=0.88
+    )
+    if found and _values_equivalent(found, value):
+        return True
+    # Дополнительно проверяем, встречается ли точное значение в профиле модели.
+    if model:
+        profile = data_kb.model_profile(model)
+        key = _param_key(p)
+        for candidate in profile.get("parameters", {}).get(key, []):
+            if _values_equivalent(candidate, value):
                 return True
     return False
 
+
+def _is_db_source(source: str) -> bool:
+    """Только сохранённый специалистом шаблон относится к источнику БД."""
+    return str(source or "").startswith("DB_TEMPLATE")
 
 def _is_blank_target(item: dict) -> bool:
     return not str(item.get("current_value", "") or "").strip()
@@ -1124,7 +1103,7 @@ def _prepare_ai_targets(
 
         # ---------------------------------------------
         # Значение уже найдено детерминированным проходом:
-        # KnowledgeEntry / legacy DB / сохраненный шаблон.
+        # data_tenders / сохраненный шаблон.
         # Такой параметр НЕ передаем в AI.
         # ---------------------------------------------
         if str(item.get("algorithm_value", "") or "").strip():
@@ -1177,441 +1156,202 @@ def _build_ai_prompt(
     kb_context: dict,
     document_context: dict[str, Any] | None = None,
 ) -> str:
-
+    """Минимальный контекст для AI: только нетипичные цели + выбранный профиль.
+    Не сериализует целиком DOCX/data_tenders, чтобы не блокировать программу.
+    """
     document_context = document_context or {}
+    detected = document_context.get("detected", {})
 
-    # =========================================================
-    # 1. ПОЛНЫЙ ДОКУМЕНТ
-    # =========================================================
-
-    full_document = {
-        "paragraphs": document_context.get("paragraphs", []),
-        "tables": document_context.get("tables", []),
-    }
-
-    # =========================================================
-    # 2. ВСЕ ИЗВЛЕЧЁННЫЕ СТРОКИ
-    # =========================================================
-
-    document_items = []
-
+    facts = []
     for item in all_items:
-        document_items.append({
-            "id": item.get("id", ""),
-            "table": item.get("table", ""),
-            "row": item.get("row", ""),
-            "num": item.get("num", ""),
-            "param_name": item.get("param_name", ""),
-            "required_val": item.get("required_val", ""),
-            "current_value": item.get("current_value", ""),
-            "db_key": item.get("db_key", ""),
-            "algorithm_value": item.get("algorithm_value", ""),
-            "algorithm_source": item.get("algorithm_source", ""),
-            "algorithm_candidate": item.get("algorithm_candidate", ""),
-            "algorithm_candidate_source": item.get("algorithm_candidate_source", ""),
-        })
+        value = _fact_value(item.get("current_value", ""), item.get("required_val", ""))
+        if not value:
+            value = str(item.get("algorithm_value", "") or "").strip()
+        if value:
+            facts.append({
+                "id": item.get("id", ""),
+                "num": item.get("num", ""),
+                "param_name": item.get("param_name", ""),
+                "value": value,
+            })
+    # Ограниченный снимок фактов текущего документа.
+    seen = set()
+    compact_facts = []
+    for x in facts:
+        k = (x["id"], norm(x["param_name"]), norm(x["value"]))
+        if k in seen:
+            continue
+        seen.add(k)
+        compact_facts.append(x)
+        if len(compact_facts) >= 100:
+            break
 
-    # =========================================================
-    # 3. ЦЕЛЕВЫЕ ПОЛЯ
-    # =========================================================
+    profiles = kb_context.get("model_profiles", {}) if isinstance(kb_context, dict) else {}
+    selected = {}
+    model = detected.get("tr_type") or (kb_context.get("selection", {}) if isinstance(kb_context, dict) else {}).get("model")
+    for key, profile in profiles.items() if isinstance(profiles, dict) else []:
+        if not model or norm(key) == norm(model):
+            selected[key] = profile
+
+    # Берём целевые параметры первыми; затем ограниченное число связанных фактов.
+    target_keys = {_param_key(x.get("param_name", "")) for x in target_items}
+    for profile in selected.values():
+        params = profile.get("parameters", {}) if isinstance(profile, dict) else {}
+        if isinstance(params, dict):
+            relevant = {k: v for k, v in params.items() if k in target_keys}
+            for k, v in params.items():
+                if k not in relevant and len(relevant) < 70:
+                    relevant[k] = v
+            profile["parameters"] = relevant
 
     targets = []
-
     for item in target_items:
-
-        allowed_values = _allowed_values(item)
-
         targets.append({
             "id": item.get("id", ""),
-            "table": item.get("table", ""),
-            "row": item.get("row", ""),
             "num": item.get("num", ""),
             "param_name": item.get("param_name", ""),
             "required_val": item.get("required_val", ""),
-            "current_value": item.get("current_value", ""),
-            "allowed_values": allowed_values,
-
-            "context": _build_target_context(
-                item,
-                all_items,
-                self_profile,
-            ),
+            "allowed_values": _allowed_values(item),
+            "context": _build_target_context(item, all_items, self_profile),
         })
 
-    # =========================================================
-    # 4. ПОЛНЫЙ КОРПУС data_tenders
-    # =========================================================
+    return f"""Ты инженер по высоковольтному электрооборудованию.
+Заполняй только переданные пустые поля. Не выдумывай значения.
 
-    data_tenders_context = kb_context
+Приоритет: выбранный профиль data_tenders → факты текущего документа → инженерный вывод.
+Если достоверного значения нет, value должен быть пустым.
+Не возвращай '*' или '**'. Верни JSON только для переданных id.
 
-    # =========================================================
-    # 5. Результат алгоритмического прохода
-    # =========================================================
+ОПРЕДЕЛЁННОЕ ИЗДЕЛИЕ:
+{json.dumps(detected, ensure_ascii=False, separators=(",", ":"))}
 
-    algorithm_pass = document_context.get(
-        "algorithm_pass",
-        []
-    )
+ВЫБРАННЫЙ ПРОФИЛЬ DATA_TENDERS:
+{json.dumps(selected, ensure_ascii=False, separators=(",", ":"))}
 
-    # =========================================================
-    # 6. ОПРЕДЕЛЁННЫЙ ТИП
-    # =========================================================
+ФАКТЫ ТЕКУЩЕГО ДОКУМЕНТА:
+{json.dumps(compact_facts, ensure_ascii=False, separators=(",", ":"))}
 
-    detected = document_context.get(
-        "detected",
-        {}
-    )
+НЕТИПИЧНЫЕ ПОЛЯ:
+{json.dumps(targets, ensure_ascii=False, separators=(",", ":"))}
 
-    # =========================================================
-    # 7. PROMPT
-    # =========================================================
-
-    data_tenders_json = json.dumps(data_tenders_context, ensure_ascii=False, indent=2)
-
-    return f"""
-Ты инженер по высоковольтному электрооборудованию.
-
-Твоя задача — заполнить ТОЛЬКО пустые поля тендерной таблицы.
-
-=========================================================
-КРИТИЧЕСКИЕ ПРАВИЛА
-=========================================================
-
-1. "*" означает, что поле свободное и требует заполнения.
-
-2. "*" НИКОГДА не является фактическим значением.
-
-3. Если required_val="*", это НЕ означает, что value="*".
-
-4. required_val — это требование технического задания,
-   а не обязательно готовый ответ.
-
-5. Если в названии параметра указаны варианты:
-
-   Тип внешней изоляции (фарфор, полимер)
-
-   то допустимые значения:
-
-   ["фарфор", "полимер"]
-
-6. Если указано:
-
-   Цвет внешней изоляции (белый/коричневый)
-
-   допустимые значения:
-
-   ["белый", "коричневый"]
-
-7. Для таких полей разрешено вернуть ТОЛЬКО один
-   из перечисленных вариантов.
-
-8. НЕЛЬЗЯ автоматически выбирать первый вариант.
-
-9. Если в текущем документе уже есть такой же параметр
-   с конкретным значением — используй его.
-
-10. Если значение отсутствует в строке, ищи его:
-    а) в других строках этого же документа;
-    б) в других таблицах документа;
-    в) в параграфах документа;
-    г) в результате алгоритмического прохода;
-    д) в БЗ.
-
-11. Нельзя использовать соседнюю строку как значение,
-    если она относится к другому параметру.
-
-12. Например:
-
-    Тип внешней изоляции (фарфор, полимер) | * | ""
-    Цвет внешней изоляции (белый/коричневый) | * | ""
-
-    Эти две строки являются РАЗНЫМИ характеристиками.
-
-13. Если найдено значение:
-
-    1.9 Тип внешней изоляции -> Фарфор
-
-    а целевое поле:
-
-    2.1 Тип внешней изоляции (фарфор, полимер) -> *
-
-    нужно вернуть:
-
-    "Фарфор"
-
-14. Если найдено:
-
-    Цвет внешней изоляции -> Белый
-
-    то для:
-
-    Цвет внешней изоляции (белый/коричневый)
-
-    нужно вернуть:
-
-    "Белый".
-
-15. Если точного основания нет — value="".
-
-16. Никогда не возвращай "*" в value.
-
-17. Никогда не возвращай "**" в value.
-
-18. evidence должен содержать ID строк, на основании
-    которых принято решение.
-
-=========================================================
-ОПРЕДЕЛЁННЫЙ ОБЪЕКТ
-=========================================================
-
-{json.dumps(
-    detected,
-    ensure_ascii=False,
-    indent=2
-)}
-
-=========================================================
-ПОЛНЫЙ ТЕКСТ ДОКУМЕНТА
-=========================================================
-
-{json.dumps(
-    full_document,
-    ensure_ascii=False,
-    indent=2
-)}
-
-=========================================================
-ВСЕ СТРОКИ ТАБЛИЦ
-=========================================================
-
-{json.dumps(
-    document_items,
-    ensure_ascii=False,
-    indent=2
-)}
-
-=========================================================
-ПЕРВЫЙ АЛГОРИТМИЧЕСКИЙ ПРОХОД
-=========================================================
-
-{json.dumps(
-    algorithm_pass,
-    ensure_ascii=False,
-    indent=2
-)}
-
-=========================================================
-ФАКТЫ ДОКУМЕНТА
-=========================================================
-
-{json.dumps(
-    self_profile.get("document_facts", [])[:100],
-    ensure_ascii=False,
-    indent=2
-)}
-
-=========================================================
-КЛЮЧЕВЫЕ ФАКТЫ
-=========================================================
-
-{json.dumps(
-    self_profile.get("global_facts", [])[:40],
-    ensure_ascii=False,
-    indent=2
-)}
-
-=========================================================
-ПОЛНЫЙ КОРПУС data_tenders
-=========================================================
-
-Это основной технический эталон для констант и связанных
-характеристик. В контексте присутствуют ВСЕ найденные DOCX
-из data_tenders, все их таблицы без дублирования merged-ячеек
-и OCR-текст встроенных изображений/чертежей.
-
-{data_tenders_json}
-
-=========================================================
-ПОЛЯ, КОТОРЫЕ НУЖНО ЗАПОЛНИТЬ
-=========================================================
-
-{json.dumps(
-    targets,
-    ensure_ascii=False,
-    indent=2
-)}
-
-=========================================================
-ФОРМАТ ОТВЕТА
-=========================================================
-
-Верни строго JSON.
-
-Для каждого id обязательно верни объект:
-
-{{
-  "item_10": {{
-    "value": "Фарфор",
-    "source": "DATA_TENDERS|SELF_CONTEXT|AI_CONTEXT|NONE",
-    "confidence": 0.98,
-    "evidence": ["item_5"],
-    "reason": "Значение найдено в строке item_5 текущего документа."
-  }}
-}}
-
-Если значение определить нельзя:
-
-{{
-  "item_10": {{
-    "value": "",
-    "source": "NONE",
-    "confidence": 0.0,
-    "evidence": [],
-    "reason": "Подтвержденное значение отсутствует."
-  }}
-}}
-
-ВАЖНО:
-- не возвращай "*";
-- не возвращай "**";
-- не добавляй текст вне JSON;
-- возвращай ВСЕ переданные id.
+Формат ответа:
+{{"item_id": {{"value":"...","source":"DATA_TENDERS|SELF_CONTEXT|AI_CONTEXT|NONE","confidence":0.0,"evidence":["id"],"reason":"..."}}}}
 """
 
+def _is_rate_limit_error(exc: Exception) -> bool:
+    s = str(exc).lower()
+    return "429" in s or "too many requests" in s
+
+
+def _ask_json_once_with_backoff(client, prompt: str):
+    """Один AI-вызов. При 429 повторяется тот же запрос, новые чанки не создаются."""
+    retries = max(0, int(os.getenv("TENDER_AI_429_RETRIES", "3")))
+    base = max(0.5, float(os.getenv("TENDER_AI_429_BASE_DELAY", "2")))
+    for attempt in range(retries + 1):
+        try:
+            return ask_json(client, prompt)
+        except Exception as exc:
+            if not _is_rate_limit_error(exc) or attempt >= retries:
+                raise
+            delay = base * (2 ** attempt)
+            print(f"[GigaChat] 429: повтор того же единого запроса через {delay:.1f} c")
+            time.sleep(delay)
+
+
+def _profile_only_kb_context(kb_context: dict | None) -> dict:
+    """Сжимает data_tenders для AI до выбранного профиля без потери текущего документа."""
+    if not isinstance(kb_context, dict):
+        return {}
+    selection = kb_context.get("selection") or {}
+    model = selection.get("model")
+    profiles = kb_context.get("model_profiles") or {}
+    selected = {}
+    if model and model in profiles:
+        selected[model] = profiles[model]
+    elif model:
+        nm = str(model).lower()
+        for key, value in profiles.items():
+            if str(key).lower() == nm:
+                selected[key] = value
+                break
+    return {
+        "source": kb_context.get("source", "data_tenders"),
+        "selection": selection,
+        "model_profiles": selected,
+        "selection_rule": kb_context.get("selection_rule", ""),
+    }
+
+
 def _ai_review(
-    client,
-    items: list[dict],
-    self_profile: dict[str, Any],
-    kb_context: dict,
-    document_context: dict[str, Any] | None = None,
-    chunk_size: int | None = None,
+    client, items: list[dict], self_profile: dict[str, Any], kb_context: dict,
+    document_context: dict[str, Any] | None = None, chunk_size: int | None = None,
 ) -> dict[str, dict]:
-
+    """Один AI-review на документ. Чанки удалены: AI вызывается максимум один раз."""
     document_context = document_context or {}
-
     pending = [
-        x
-        for x in items
-        if (
-            _is_blank_target(x)
-            and x.get("pre_ai_source") != "SKIP_NON_FIELD"
-            and not x.get("pre_ai_value")
-        )
+        x for x in items
+        if _is_blank_target(x)
+        and x.get("pre_ai_source") != "SKIP_NON_FIELD"
+        and not x.get("pre_ai_value")
     ]
-
     if not pending:
         return {}
 
-    merged: dict[str, dict] = {}
-
-    # Обычно один запрос закрывает весь остаток. Если prompt слишком большой,
-    # делаем небольшое число крупных чанков вместо старых порций по 12 строк.
-    if chunk_size is None:
-        try:
-            chunk_size = max(20, int(os.getenv("TENDER_AI_CHUNK_SIZE", "32")))
-        except ValueError:
-            chunk_size = 32
     try:
-        max_prompt_chars = int(os.getenv("TENDER_AI_MAX_PROMPT_CHARS", "240000"))
+        max_chars = int(os.getenv("TENDER_AI_MAX_PROMPT_CHARS", "60000"))
     except ValueError:
-        max_prompt_chars = 240000
+        max_chars = 60000
 
-    # Если весь запрос помещается в лимит, отправляем его ровно один раз.
+    def run_with_context(ctx: dict) -> tuple[dict, str]:
+        prompt = _build_ai_prompt(pending, items, self_profile, ctx, document_context)
+        key = _ai_cache_key(prompt)
+        cached = _AI_RESPONSE_CACHE.get(key)
+        if cached is not None:
+            return dict(cached), "cache"
+        if len(prompt) > max_chars:
+            raise ValueError(f"AI prompt too large: {len(prompt)} > {max_chars}")
+        part = _ask_json_once_with_backoff(client, prompt)
+        if not isinstance(part, dict):
+            raise RuntimeError("неверный формат ответа")
+        valid_ids = {x["id"] for x in pending}
+        cleaned = {
+            k: {**v, "value": _clean_ai_value(v.get("value", ""))}
+            for k, v in part.items()
+            if k in valid_ids and isinstance(v, dict)
+        }
+        _AI_RESPONSE_CACHE[key] = cleaned
+        return cleaned, "api"
+
+    # Сначала один запрос с контекстом выбранного профиля.
     try:
-        whole_prompt = _build_ai_prompt(pending, items, self_profile, kb_context, document_context)
-        if len(whole_prompt) <= max_prompt_chars:
-            try:
-                part = ask_json(client, whole_prompt)
-                if isinstance(part, dict):
-                    valid_ids = {x["id"] for x in pending}
-                    return {k: v for k, v in part.items() if k in valid_ids and isinstance(v, dict)}
-            except Exception as exc:
-                print(f"[GigaChat] единый запрос не прошёл, переходим на чанки: {exc}")
+        compact_ctx = _profile_only_kb_context(kb_context)
+        result, source = run_with_context(compact_ctx)
+        print(f"[GigaChat] единственный AI-запрос: targets={len(pending)} source={source}")
+        return result
     except Exception as exc:
-        print(f"[GigaChat] не удалось собрать единый prompt: {exc}")
+        print(f"[GigaChat] единый профильный запрос не выполнен: {exc}")
+        print("[GigaChat] AI-этап пропущен; сохраняем результаты алгоритма data_tenders.")
+        # Любая ошибка AI не должна ломать основной pipeline.
+        # Алгоритмические/data_tenders значения уже подготовлены выше.
+        return {}
 
-    for start in range(0, len(pending), chunk_size):
-
-        chunk = pending[start:start + chunk_size]
-
-        prompt = _build_ai_prompt(
-            chunk,
-            items,
-            self_profile,
-            kb_context,
-            document_context,
-        )
-
-        try:
-            part = ask_json(
-                client,
-                prompt,
-            )
-
-            if not isinstance(part, dict):
-                print(
-                    f"[GigaChat] chunk "
-                    f"{start + 1}-{start + len(chunk)}: "
-                    f"неверный формат ответа"
-                )
-                continue
-
-            ids = {
-                x["id"]
-                for x in chunk
-            }
-
-            for key, value in part.items():
-
-                if key not in ids:
-                    continue
-
-                if not isinstance(value, dict):
-                    continue
-
-                # ---------------------------------------------
-                # Никогда не принимаем "*" как value
-                # ---------------------------------------------
-                clean_value = _clean_ai_value(
-                    value.get("value", "")
-                )
-
-                value["value"] = clean_value
-
-                merged[key] = value
-
-            missing = ids - set(merged)
-
-            if missing:
-                print(
-                    f"[GigaChat] chunk "
-                    f"{start + 1}-{start + len(chunk)}: "
-                    f"без ответа {sorted(missing)}"
-                )
-
-        except Exception as exc:
-
-            print(
-                f"[GigaChat] chunk "
-                f"{start + 1}-{start + len(chunk)} "
-                f"failed: {exc}"
-            )
-
-    return merged
 
 def _is_constraint_like_required(required_val: str, param_name: str = "") -> bool:
-    """True для требований, которые нельзя механически копировать как предложение."""
-    raw = norm(required_val)
-    p = norm(param_name)
-    if not raw or raw == "*":
-        return True
-    if any(x in raw for x in ("не менее", "не более", "в соответствии", "согласно", "должен", "должны", "обязательно", "требуется")):
-        return True
-    if "предел" in p or "сопротивлен" in p or "ток" in p or "нагруз" in p:
-        # Числовые поля с ограничением лучше заполнять фактическим значением
-        # из профиля/контекста, а не просто повторять порог ТЗ.
-        return bool(re.search(r"\d", raw))
-    return False
+    """Определяет, является ли требование ограничением, а не готовым значением."""
+    req = _clean_ai_value(required_val)
+    if not req:
+        return False
+    low = norm(req)
+    return bool(
+        re.search(r"\bне\s+(?:менее|более)\b", low)
+        or re.search(r"\b(?:не менее|не более)\b", low)
+        or "в соответствии" in low
+        or "согласно" in low
+        or "должен" in low
+        or "не должна" in low
+        or "не должно" in low
+        or "допускается" in low
+    )
 
 
 def _same_requirement_value(required_val: str, ai_value: str) -> bool:
@@ -1715,15 +1455,11 @@ def _merge_algorithm_and_ai(
     item: dict,
     aid: dict,
     *,
-    session: Session,
-    tr_type: TrType,
-    voltage: str | None,
+    data_kb=None,
+    model: str | None = None,
+    voltage: str | None = None,
 ) -> tuple[str, str, str, float, str]:
-    """Сливает БД и AI с жестким правилом источника.
-
-    ** ставится ТОЛЬКО для значения, которое пришло от AI и не найдено
-    среди применимых констант БД. Если значение есть в БД — маркер снимается.
-    """
+    """Сливает data_tenders и AI. Шаблон DB_TEMPLATE защищен отдельно."""
     ai_value = _clean_ai_value(aid.get("value", ""))
     try:
         confidence = max(0.0, min(1.0, float(aid.get("confidence", 0) or 0)))
@@ -1755,8 +1491,8 @@ def _merge_algorithm_and_ai(
 
     # Если AI самостоятельно вернул значение, которое уже есть в БД проекта,
     # маркер также запрещен.
-    if ai_value and _is_known_db_value(session, item, ai_value, tr_type, voltage):
-        return ai_value, "DB", "", confidence, reason
+    if ai_value and data_kb is not None and _is_known_data_tenders_value(data_kb, item, ai_value, model, voltage):
+        return ai_value, "DATA_TENDERS", "", confidence, reason
 
     if alg_value:
         if _values_equivalent(ai_value, alg_value):
@@ -1866,6 +1602,8 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
         template_items,
         tr_type_id=tr_type.id,
         voltage=voltage,
+        filename=Path(docx_path).name,
+        model=tr_type.name if tr_type else None,
     )
     template_filled = 0
     profile_filled = 0
@@ -1891,15 +1629,36 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
                 _item["algorithm_source"] = ""
     else:
         # Шаблон не найден — запускаем обычный первичный конвейер.
+        # Vision запускается только для выбранного профиля и только когда
+        # после детерминированного прохода действительно остаются сложные поля.
         algorithm_items = _algorithm_fill(
             session, items, tr_type, voltage,
             data_kb=data_kb, document_text=document_text
         )
+        if any(not str(x.get("algorithm_value", "") or "").strip() for x in algorithm_items):
+            try:
+                added_vision = 0
+                if os.getenv("DATA_TENDERS_VISION_LIVE", "0") == "1":
+                    added_vision = data_kb.ensure_vision_for_model(
+                        tr_type.name,
+                        max_images=int(os.getenv("DATA_TENDERS_VISION_MODEL_MAX", "6"))
+                    )
+                else:
+                    # Обычный запуск не делает сетевых Vision-запросов.
+                    # Используются только ранее сохранённые результаты.
+                    data_kb.refresh(ocr_images=True)
+                if added_vision:
+                    # После появления Vision-записей повторяем только локальный алгоритмический pass.
+                    algorithm_items = _algorithm_fill(
+                        session, items, tr_type, voltage,
+                        data_kb=data_kb, document_text=document_text
+                    )
+                    print(f"[DATA_TENDERS][VISION] для профиля {tr_type.name} добавлено изображений: {added_vision}")
+            except Exception as exc:
+                print(f"[DATA_TENDERS][VISION] пропуск targeted Vision: {exc}")
 
-        profile_filled = apply_voltage_profile(session, algorithm_items, voltage)
-        if profile_filled:
-            print(f"[KB PROFILE] заполнено из профиля {voltage} кВ: {profile_filled}")
-        print("[KB TEMPLATE] подходящий шаблон не найден")
+        profile_filled = 0
+        print("[KB TEMPLATE] подходящий шаблон не найден; технические константы берутся только из data_tenders")
 
     # Полный снимок документа после первого (детерминированного) прохода.
     filled_context = [
@@ -1922,13 +1681,22 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
         if item.get("algorithm_value"):
             _set_cell_text(target_cell, str(item["algorithm_value"]), "")
 
-    kb_context = data_kb.build_full_context(model=data_kb.detect_model(document_text) or None, voltage=voltage, include_images=True)
     self_profile = _build_self_context(algorithm_items, extra["document"])
     if template is not None:
+        # Найденный шаблон — конечный путь: data_tenders и AI здесь не запускаем.
         ai_targets, self_filled = [], []
-        # В TEMPLATE_ONLY нельзя передавать незаполненные строки дальше в AI.
+        kb_context = {}
     else:
         ai_targets, self_filled = _prepare_ai_targets(algorithm_items, self_profile)
+        if ai_targets:
+            kb_context = {
+                "source": "data_tenders",
+                "selection": {"model": tr_type.name, "voltage": voltage},
+                "model_profiles": {tr_type.name: data_kb.model_profile(tr_type.name)},
+                "selection_rule": "Только выбранное исполнение изделия.",
+            }
+        else:
+            kb_context = {}
     doc_context = {
         **extra["document"],
         "algorithm_pass": filled_context,
@@ -1957,7 +1725,7 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
                 self_profile,
                 kb_context,
                 doc_context,
-            )
+            ) or {}
 
     audit_rows = []
     marked = 0
@@ -1976,7 +1744,7 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
         if not isinstance(evidence, list):
             evidence = [str(evidence)]
         value, source, mark, confidence, reason = _merge_algorithm_and_ai(
-            item, aid, session=session, tr_type=tr_type, voltage=voltage
+            item, aid, data_kb=data_kb, model=tr_type.name, voltage=voltage
         )
 
         # Уже заполненный участником ответ по умолчанию не стираем.
@@ -1986,11 +1754,6 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
 
         # Если AI промолчал, используем явное требование из соседней колонки.
         # Для значений, выведенных не из БД, ставится ** (или * при уже отмеченном *).
-        if not value and template is None:
-            requirement_value = _fallback_from_requirement(item.get("required_val", ""))
-            if requirement_value:
-                value = requirement_value
-                source, mark = "REQUIREMENT", _ai_mark_for_required(item.get("required_val", ""))
 
         if not value and not _is_header_row(item["param_name"], item["num"], item.get("required_val", "")):
             unresolved.append(item["id"])
@@ -2020,7 +1783,7 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
                 "confidence": confidence,
                 "reason": reason,
                 "evidence": evidence,
-                "decision": ("DB_PRIORITY" if source == "DB" else "AI_OVERRIDE" if source == "AI_CONTEXT" else "ALGORITHM_OR_FALLBACK"),
+                "decision": ("DATA_TENDERS_PRIORITY" if source == "DB" else "AI_OVERRIDE" if source == "AI_CONTEXT" else "ALGORITHM_OR_FALLBACK"),
             }
         )
 
@@ -2059,7 +1822,7 @@ def process_docx_requirements(docx_path: str, output_path: str, session: Session
                     "context_first": True,
                     "ai_only_for_unresolved_blank_fields": True,
                     "template_knowledge_priority": True,
-                    "ai_not_called_for_template_or_field_kb_values": True,
+                    "ai_not_called_for_template_values": True,
                     "knowledge_saved_only_after_engineer_final_save": True,
                     "gigachat_connection_check_disabled_by_default": True,
                 },
