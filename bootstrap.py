@@ -28,6 +28,7 @@ def migrate_tender_columns():
         "table_index": "INTEGER",
         "target_cell_index": "INTEGER",
         "field_key": "VARCHAR(150)",
+        "parent_context": "VARCHAR(500)",
     }
     with engine.begin() as conn:
         for name, typ in additions.items():

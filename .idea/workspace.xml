@@ -5,19 +5,76 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="986f730e-710e-4d95-a86c-1bd652cdae22" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/README_TENDER_ENGINE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TENDER_ENGINE_LOGIC.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_tenders/.drawing_vision_cache.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_tenders/tenders.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/ai_context.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/ai_review.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/drawing_reader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/ai.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/context.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/data_source.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/docx_reader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/pdf_pipeline.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/pdf_reader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/pdf_writer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/pipeline.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/requirements.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/resolver.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/rules.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/schema.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/template_store.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/text.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/validator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/tender_engine/writer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_ai_context_pipeline.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_drawing_reader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_first_run.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_gigachat_json_repair.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_pdf_pipeline.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_tender_engine.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tools/learn_tender_doc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Заполненный_ПС Калийная_ТРГ-110_36шт (1).pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Заполненный_ПС Калийная_ТРГ-110_36шт (1)_для_редактирования.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AI_API_to_fill_tender_PDF_support.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.tmp_normalized/30.11.2021 ТехТреб ТРГ-110 поз.20 Поляково.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_429_FIX.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_AI_ONE_REQUEST.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_DATA_SOURCE_ARCHITECTURE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_DATA_TENDERS_AI.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_DATA_TENDERS_ONE_PASS.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_DATA_TENDERS_VISION.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_FAST.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_FINAL_FIXES.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_FINAL_FIXES_V5.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_OPTIMIZED.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_PDF_WORD_EDITING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_PERFORMANCE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_PROFILE_PIPELINE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_READY.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_SPECIALIST_HEADER_V8.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_SPECIALIST_NAME.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_TEMPLATE_FIX.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_V6_FIX.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/tr_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/tr_type.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/data_tenders_knowledge.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/data_tenders_knowledge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/document_tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/document_tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/pdf_word_edit.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/pdf_word_edit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/gigachat_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/gigachat_client.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/search_docx_AI.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/search_docx_AI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/search_pdf_AI.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/search_pdf_AI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/template_knowledge.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/template_knowledge.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transformers.db" beforeDir="false" afterPath="$PROJECT_DIR$/transformers.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Заполненный_30.11.2021 ТехТреб ТРГ-110 поз.20 Поляково.docx.audit.json" beforeDir="false" afterPath="$PROJECT_DIR$/Заполненный_30.11.2021 ТехТреб ТРГ-110 поз.20 Поляково.docx.audit.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Заполненный_30.11.2021 ТехТреб ТРГ-110 поз.20 Поляково.docx.audit.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Заполненный_6da5de63-95fe-4730-9fc1-16683ad9b29c Технические требования ПС Нижний Куранах.docx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Заполненный_6da5de63-95fe-4730-9fc1-16683ad9b29c Технические требования ПС Нижний Куранах.docx.audit.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,23 +100,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.gigachat_client.executor": "Debug",
-    "Python.interface.executor": "Debug",
-    "Python.main.executor": "Run",
-    "Python.search_docx_hybrid.executor": "Debug",
-    "Python.search_pdf_AI.executor": "Debug",
-    "Python.test_gigachat.executor": "Run",
-    "Python.test_image.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Magomedov_NM/Downloads/AI_API_to_fill_tender_PDF_support"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.gigachat_client.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.interface.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.search_docx_hybrid.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.search_pdf_AI.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.test_gigachat.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_image.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Magomedov_NM/Downloads/AI_API_to_fill_tender_PDF_support&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Magomedov_NM\Downloads\AI_API_to_fill_tender_PDF_support" />
@@ -155,7 +212,29 @@
           <line>76</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/interface.py</url>
+          <line>92</line>
+          <option name="timeStamp" value="550" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/services/template_knowledge.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="554" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/services/tender_engine/pipeline.py</url>
+          <line>65</line>
+          <option name="timeStamp" value="558" />
+        </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
   </component>
 </project>

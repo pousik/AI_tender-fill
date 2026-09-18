@@ -112,6 +112,7 @@ class TenderParameter(Base):
     table_index = Column(Integer, nullable=True)
     target_cell_index = Column(Integer, nullable=True)
     field_key = Column(String(150), nullable=True)
+    parent_context = Column(String(500), nullable=True)
     is_mandatory = Column(Boolean, default=False)
     tender = relationship("Tender")
 
